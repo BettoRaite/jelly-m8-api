@@ -1,12 +1,13 @@
-import type { Request, Response } from 'express';
-import logger from './logger';
+import type { NextFunction, Request, Response } from "express";
 
-export const errorHandler = (
+function errorHandler(
   err: Error,
-  _req: Request,
-  res: Response
-): void => {
-  logger.error(err);
-
+  _r: Request,
+  res: Response,
+  _n: NextFunction
+) {
+  console.log(res);
   res.status(500).json({ message: err.message });
-};
+}
+
+export default errorHandler;
