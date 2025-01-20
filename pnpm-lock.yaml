@@ -144,9 +144,6 @@ importers:
       eslint-plugin-standard:
         specifier: ^5.0.0
         version: 5.0.0(eslint@8.57.1)
-      husky:
-        specifier: ^8.0.3
-        version: 8.0.3
       jest:
         specifier: ^29.4.3
         version: 29.7.0(@types/node@22.10.7)(ts-node@10.9.2(@types/node@22.10.7)(typescript@5.0.2))
@@ -2271,11 +2268,6 @@ packages:
   human-signals@2.1.0:
     resolution: {integrity: sha512-B4FFZ6q/T2jhhksgkbEW3HBvWIfDW85snkQgawt07S7J5QXTk6BkNV+0yAeZrM5QpMAdYlocGoljn0sJ/WQkFw==}
     engines: {node: '>=10.17.0'}
-
-  husky@8.0.3:
-    resolution: {integrity: sha512-+dQSyqPh4x1hlO1swXBiNb2HzTDN1I2IGLQx1GrBuiqFJfoMrnZWwVmatvSiO+Iz8fBUnf+lekwNo4c2LlXItg==}
-    engines: {node: '>=14'}
-    hasBin: true
 
   iconv-lite@0.4.24:
     resolution: {integrity: sha512-v3MXnZAcvnywkTUEZomIActle7RXXeedOR31wwl7VlyoXO4Qi9arvSenNQWne1TcRwhCL1HwLI21bEqdpj8/rA==}
@@ -5923,8 +5915,6 @@ snapshots:
       - supports-color
 
   human-signals@2.1.0: {}
-
-  husky@8.0.3: {}
 
   iconv-lite@0.4.24:
     dependencies:

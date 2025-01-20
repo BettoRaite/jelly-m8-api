@@ -1,3 +1,4 @@
+import { Param } from "drizzle-orm";
 import type { NextFunction, Request, Response } from "express";
 import type { DeepPartial } from "utility-types";
 import type { IFilterXSSOptions } from "xss";
@@ -15,9 +16,10 @@ export type RequireAtLeastOne<T> = {
 // More strictly typed Express.Request type
 export type TypedRequest<
   ReqBody = Record<string, unknown>,
-  QueryString = Record<string, unknown>
+  QueryString = Record<string, unknown>,
+  Params = Record<string, unknown>
 > = Request<
-  Record<string, unknown>,
+  DeepPartial<Params>,
   Record<string, unknown>,
   DeepPartial<ReqBody>,
   DeepPartial<QueryString>

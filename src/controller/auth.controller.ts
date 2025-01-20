@@ -17,15 +17,19 @@ export const handleLogin = async (req: Request, res: Response) => {
     .select()
     .from(users)
     .where(eq(users.accessKey, accessKey));
-  const user = result[0];
+  let user = result[0];
+  // Simplied admin login
+  if (config.node_env === "development" && accessKey === "admin") {
+    user = (await db.select().from(users).where(eq(users.role, "admin")))[0];
+  }
   // In case the access key is invalid
   if (!user) {
-    return res.status(httpStatus.FORBIDDEN);
+    return res.sendStatus(httpStatus.FORBIDDEN);
   }
   const { role, accessKey: storedAK } = user;
   const token = createAccessToken({
     role,
-    userId: String(user.id),
+    userId: user.id,
     accessKey: storedAK,
   });
   // Setting token on cookies
