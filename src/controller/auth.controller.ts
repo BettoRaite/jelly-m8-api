@@ -1,8 +1,8 @@
 import db from "@/database";
 import { users } from "@/database/schema";
-import { UserLoginPayload } from "@/schemas/login.schema";
+import type { UserLoginPayload } from "@/schemas/login.schema";
 import { eq } from "drizzle-orm";
-import { Request, Response } from "express";
+import type { Request, Response } from "express";
 import httpStatus from "http-status";
 import { createAccessToken } from "@/lib/utils/token.util";
 import config from "@/lib/config/config";

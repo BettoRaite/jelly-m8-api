@@ -1,13 +1,13 @@
 import db from "@/database";
 import { compliments, profiles, users } from "@/database/schema";
 import { and, eq } from "drizzle-orm";
-import { Request, Response } from "express";
+import type { Request, Response } from "express";
 import httpStatus from "http-status";
 import { getProfileById, getProfileByName } from "@/database/profiles.db";
-import { CreateProfilePayload } from "@/schemas/profiles.schema";
-import { TypedRequest } from "@/lib/types/types";
-import { JwtPayload } from "jsonwebtoken";
-import { CreateComplimentPayload } from "@/schemas/compliment.schema";
+import type { CreateProfilePayload } from "@/schemas/profiles.schema";
+import type { TypedRequest } from "@/lib/types/types";
+import type { JwtPayload } from "jsonwebtoken";
+import type { CreateComplimentPayload } from "@/schemas/compliment.schema";
 
 export const handleCreateProfile = async (req: Request, res: Response) => {
   const payload = req.body as CreateProfilePayload;

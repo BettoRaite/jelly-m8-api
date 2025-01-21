@@ -1,5 +1,5 @@
 import z from "zod";
-import { ProfilesInsert } from "@/database/schema";
+import type { ProfilesInsert } from "@/database/schema";
 
 export const createProfileSchema: z.ZodType<ProfilesInsert> = z.object({
   name: z.string().trim().min(3),

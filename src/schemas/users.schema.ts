@@ -1,5 +1,5 @@
 import z from "zod";
-import { UsersSelect } from "@/database/schema";
+import type { UsersSelect } from "@/database/schema";
 
 export const createUserSchema: z.ZodType<
   Omit<UsersSelect, "id" | "accessKey" | "profilePicUrl">

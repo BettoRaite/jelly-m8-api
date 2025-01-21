@@ -2,13 +2,13 @@ import {
   checkUserComplimentOwnership,
   getComplimentById,
 } from "@/database/compliments.db";
-import { TypedRequest } from "../lib/types/types";
+import type { TypedRequest } from "../lib/types/types";
 import httpStatus from "http-status";
-import { Response } from "express";
-import { CreateComplimentPayload } from "@/schemas/compliment.schema";
+import type { Response } from "express";
+import type { CreateComplimentPayload } from "@/schemas/compliment.schema";
 import db from "@/database";
 import { compliments } from "@/database/schema";
-import { JwtPayload } from "jsonwebtoken";
+import type { JwtPayload } from "jsonwebtoken";
 
 export const handleUpdateCompliment = async (
   req: TypedRequest<

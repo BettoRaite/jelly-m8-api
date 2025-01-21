@@ -4,7 +4,7 @@ import httpStatus from "http-status";
 
 import jwt, { type JwtPayload } from "jsonwebtoken";
 import config from "@/lib/config/config";
-import { Roles } from "@/lib/types/types";
+import type { Roles } from "@/lib/types/types";
 import { getUserByAccessKey } from "@/database/users.db";
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment

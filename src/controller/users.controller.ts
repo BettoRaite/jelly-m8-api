@@ -1,9 +1,9 @@
 import db from "@/database";
 import { users } from "@/database/schema";
 import { getUserById, getUserByName } from "@/database/users.db";
-import { CreateUserPayload } from "@/schemas/users.schema";
+import type { CreateUserPayload } from "@/schemas/users.schema";
 import { eq } from "drizzle-orm";
-import { Request, Response } from "express";
+import type { Request, Response } from "express";
 import httpStatus from "http-status";
 import { v4 as uuidv4 } from "uuid";
 
