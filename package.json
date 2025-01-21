@@ -16,7 +16,7 @@
     "test": "",
     "test:watch": "",
     "coverage": "",
-    "prepare": "husky install"
+    "prepare": "husky"
   },
   "dependencies": {
     "compression": "^1.7.4",
