@@ -1,4 +1,12 @@
-import { integer, pgTable, serial, text, varchar } from "drizzle-orm/pg-core";
+import {
+  integer,
+  pgTable,
+  serial,
+  text,
+  varchar,
+  boolean,
+  unique,
+} from "drizzle-orm/pg-core";
 
 // Users Table
 export const users = pgTable("users", {
@@ -15,19 +23,28 @@ export const profiles = pgTable("profiles", {
   id: serial("id").primaryKey(),
   name: varchar("name", { length: 100 }).notNull(),
   bio: text("bio").notNull(),
+  isActivated: boolean().default(false),
 });
 
 // Compliments Table
-export const compliments = pgTable("compliments", {
-  id: serial("id").primaryKey(),
-  userId: integer("user_id")
-    .notNull()
-    .references(() => users.id),
-  content: text("content").notNull(),
-  profileId: integer("profile_id") // Changed from girlProfileId to profileId
-    .notNull()
-    .references(() => profiles.id), // Updated reference to profiles
-});
+export const compliments = pgTable(
+  "compliments",
+  {
+    id: serial("id").primaryKey(),
+    content: text("content").notNull(),
+    userId: integer("user_id")
+      .notNull()
+      .references(() => users.id),
+    profileId: integer("profile_id") // Changed from girlProfileId to profileId
+      .notNull()
+      .references(() => profiles.id), // Updated reference to profiles
+  },
+  (t) => [
+    {
+      userIdProfileIdConstrain: unique().on(t.userId, t.profileId),
+    },
+  ]
+);
 
 export type UsersInsert = typeof users.$inferInsert; // Type for inserting a user
 export type UsersSelect = typeof users.$inferSelect; // Type for selecting a user

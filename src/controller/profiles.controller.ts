@@ -8,6 +8,8 @@ import type { CreateProfilePayload } from "@/schemas/profiles.schema";
 import type { TypedRequest } from "@/lib/types/types";
 import type { JwtPayload } from "jsonwebtoken";
 import type { CreateComplimentPayload } from "@/schemas/compliment.schema";
+import * as profilesService from "@/services/profiles.service";
+import { hasAtLeastOneField } from "@/lib/utils/object";
 
 export const handleCreateProfile = async (req: Request, res: Response) => {
   const payload = req.body as CreateProfilePayload;
@@ -63,13 +65,31 @@ export const handleAddComplimentToProfile = async (
   });
 };
 
+export const handleActivateProfiles = async (_: Request, res: Response) => {
+  const rowsAffected = await profilesService.setProfilesActivation(true);
+  if (!rowsAffected) {
+    return res.status(httpStatus.INTERNAL_SERVER_ERROR);
+  }
+  res.status(httpStatus.OK).json({
+    message: "Successfully activated all profiles",
+  });
+};
+
+export const handleDeactivateProfiles = async (_: Request, res: Response) => {
+  const rowsAffected = await profilesService.setProfilesActivation(false);
+  if (!rowsAffected) {
+    return res.status(httpStatus.INTERNAL_SERVER_ERROR);
+  }
+  res.status(httpStatus.OK).json({
+    message: "Successfully deactivated all profiles",
+  });
+};
+
 // Will need to join the compliments with the
 export const handleGetProfiles = async (_: Request, res: Response) => {
   const result = await db.select().from(profiles);
   res.status(httpStatus.OK).json({
-    data: {
-      profiles: result,
-    },
+    data: result,
   });
 };
 
@@ -98,9 +118,7 @@ export const handleGetProfileCompliments = async (
     .where(eq(compliments.profileId, profileId as number))
     .innerJoin(users, eq(users.id, compliments.userId));
   res.status(httpStatus.OK).json({
-    data: {
-      profileCompliments: result,
-    },
+    data: result,
   });
 };
 
@@ -113,6 +131,11 @@ export const handleUpdateProfile = async (req: Request, res: Response) => {
       message: "Profile with such id does not exist",
     });
   }
+  if (!hasAtLeastOneField(payload)) {
+    return res.status(httpStatus.NO_CONTENT).json({
+      message: "Nothing to update",
+    });
+  }
   await db
     .update(profiles)
     .set({
@@ -123,10 +146,24 @@ export const handleUpdateProfile = async (req: Request, res: Response) => {
   res.status(httpStatus.OK).json({ message: "Successfully updated profile" });
 };
 
-export const handleActivateProfiles = async (req: Request, res: Response) => {
-  // to be added
-};
-
-export const handleDeleteProfile = async (req: Request, res: Response) => {
-  // to be added
+export const handleDeleteProfile = async (
+  req: TypedRequest<
+    unknown,
+    unknown,
+    {
+      profileId: number;
+    }
+  >,
+  res: Response
+) => {
+  const { profileId } = req.params;
+  const result = await profilesService.deleteProfile(profileId as number);
+  if (result.isError) {
+    res.status(result.status).json({
+      message: result.message,
+    });
+  }
+  res.status(httpStatus.OK).json({
+    data: result.data,
+  });
 };

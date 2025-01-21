@@ -5,6 +5,7 @@ import type { CreateUserPayload } from "@/schemas/users.schema";
 import { eq } from "drizzle-orm";
 import type { Request, Response } from "express";
 import httpStatus from "http-status";
+import { JwtPayload } from "jsonwebtoken";
 import { v4 as uuidv4 } from "uuid";
 
 export const handleCreateUser = async (req: Request, res: Response) => {
@@ -34,9 +35,19 @@ export const handleCreateUser = async (req: Request, res: Response) => {
 export const handleGetUsers = async (_: Request, res: Response) => {
   const result = await db.select().from(users);
   res.status(httpStatus.OK).json({
-    data: {
-      users: result,
-    },
+    data: result,
+  });
+};
+
+export const handleGetUserSelf = async (req: Request, res: Response) => {
+  const { userId } = req.payload as JwtPayload;
+  const user = await getUserById(userId);
+  if (!user) {
+    return res.status(httpStatus.INTERNAL_SERVER_ERROR);
+  }
+  user.accessKey = undefined as unknown as string;
+  res.status(httpStatus.OK).json({
+    data: user,
   });
 };
 

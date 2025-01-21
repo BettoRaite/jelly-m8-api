@@ -20,6 +20,12 @@ usersRouter.get(
   controller.handleGetUsers
 );
 
+usersRouter.get(
+  "/users/me",
+  createAuthMiddleware("admin", "user"),
+  controller.handleGetUserSelf
+);
+
 usersRouter.patch(
   "/users/:id/access-token/invalidate",
   createAuthMiddleware("admin"),
