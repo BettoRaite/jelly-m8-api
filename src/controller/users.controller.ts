@@ -1,20 +1,33 @@
 import db from "@/database";
 import { users } from "@/database/schema";
 import { getUserById, getUserByName } from "@/database/users.db";
+import config from "@/lib/config/config";
 import type { CreateUserPayload } from "@/schemas/users.schema";
+import { tryUploadUserProfileImage } from "@/services/storage.service";
 import { eq } from "drizzle-orm";
-import type { Request, Response } from "express";
+import type { NextFunction, Request, Response } from "express";
 import httpStatus from "http-status";
 import { JwtPayload } from "jsonwebtoken";
 import { v4 as uuidv4 } from "uuid";
+import formidable from "formidable";
 
-export const handleCreateUser = async (req: Request, res: Response) => {
-  const { name, role } = req.body as CreateUserPayload;
-  const user = await getUserByName(name);
-  if (user) {
+export const handleCreateUser = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const payload = req.body as CreateUserPayload;
+  const { name = "dddd", role = "user" } = payload;
+  const { file } = req;
+  const storedUser = await getUserByName(name);
+  if (storedUser) {
     return res.status(httpStatus.CONFLICT).json({
       message: "user with given name already exists",
     });
+  }
+
+  if (file) {
+    const profileImageUrl = await tryUploadUserProfileImage(file, payload);
   }
 
   const accessKey = uuidv4();
@@ -22,7 +35,9 @@ export const handleCreateUser = async (req: Request, res: Response) => {
     name,
     role,
     accessKey,
+    profileImageUrl: config.supabase.default_profile_image_url,
   });
+
   // Sending back user access key
   res.status(httpStatus.CREATED).json({
     message: "Successfully created user",

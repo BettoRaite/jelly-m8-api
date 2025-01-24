@@ -111,7 +111,7 @@ export const handleGetProfileCompliments = async (
       author: {
         id: users.id,
         name: users.name,
-        profilePicUrl: users.profilePicUrl,
+        profileImageUrl: users.profileImageUrl,
       },
     })
     .from(compliments)

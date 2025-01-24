@@ -4,12 +4,29 @@ import createAuthMiddleware from "@/middleware/auth";
 import validate from "@/middleware/validate";
 import { createUserSchema } from "@/schemas/users.schema";
 import z from "zod";
+import multer from "multer";
+import { v4 as uuidv4 } from "uuid";
 
 const usersRouter: Router = Router();
 
+const storage = multer.diskStorage({
+  destination: function (_, __, cb) {
+    cb(null, "./tmp/uploads");
+  },
+  filename: function (_, file, cb) {
+    const extension = file.originalname.slice(
+      file.originalname.lastIndexOf(".")
+    );
+    const fileName = `${uuidv4()}.${extension}`;
+    cb(null, fileName);
+  },
+});
+
+const upload = multer({ storage: storage });
 usersRouter.post(
   "/users",
   createAuthMiddleware("admin"),
+  upload.single("profileImage"),
   validate({ body: createUserSchema }),
   controller.handleCreateUser
 );

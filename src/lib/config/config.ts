@@ -16,6 +16,9 @@ const envSchema = z.object({
   ACCESS_TOKEN_SECRET: z.string().min(1),
   ACCESS_TOKEN_EXPIRE: z.string().min(1),
   DATABASE_URL: z.string(),
+  SUPABASE_DEFAULT_PROFILE_IMAGE_URL: z.string().optional(),
+  SUPABASE_PROJECT_URL: z.string(),
+  SUPABASE_API_KEY: z.string(),
 });
 
 const { success, data, error } = envSchema.safeParse(process.env);
@@ -46,6 +49,11 @@ const config = {
   },
   database: {
     url: data.DATABASE_URL,
+  },
+  supabase: {
+    project_url: data.SUPABASE_PROJECT_URL,
+    project_api_key: data.SUPABASE_API_KEY,
+    default_profile_image_url: data.SUPABASE_DEFAULT_PROFILE_IMAGE_URL,
   },
 } as const;
 export default config;

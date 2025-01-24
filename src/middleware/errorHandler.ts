@@ -6,7 +6,7 @@ function errorHandler(
   res: Response,
   _n: NextFunction
 ) {
-  console.log(res);
+  console.log(err);
   res.status(500).json({ message: err.message });
 }
 

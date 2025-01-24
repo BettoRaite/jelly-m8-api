@@ -12,7 +12,7 @@ import {
 export const users = pgTable("users", {
   id: serial("id").primaryKey(),
   name: varchar("name", { length: 100 }).notNull().unique(),
-  profilePicUrl: varchar({ length: 255 }),
+  profileImageUrl: varchar({ length: 500 }),
   role: varchar("role", { length: 10 }).notNull(),
   accessKey: varchar("access_key", { length: 255 }).notNull(),
 });
