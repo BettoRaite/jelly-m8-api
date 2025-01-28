@@ -5,42 +5,29 @@ import validate from "@/middleware/validate";
 import { createUserSchema } from "@/schemas/users.schema";
 import z from "zod";
 import multer from "multer";
-import { v4 as uuidv4 } from "uuid";
+import { storageConfig } from "@/lib/config/storage";
 
 const usersRouter: Router = Router();
 
-const storage = multer.diskStorage({
-  destination: function (_, __, cb) {
-    cb(null, "./tmp/uploads");
-  },
-  filename: function (_, file, cb) {
-    const extension = file.originalname.slice(
-      file.originalname.lastIndexOf(".")
-    );
-    const fileName = `${uuidv4()}.${extension}`;
-    cb(null, fileName);
-  },
-});
-
-const upload = multer({ storage: storage });
+const upload = multer({ storage: storageConfig });
 usersRouter.post(
   "/users",
   createAuthMiddleware("admin"),
   upload.single("profileImage"),
   validate({ body: createUserSchema }),
-  controller.handleCreateUser
+  controller.handleCreateUser,
 );
 
 usersRouter.get(
   "/users",
   createAuthMiddleware("admin"),
-  controller.handleGetUsers
+  controller.handleGetUsers,
 );
 
 usersRouter.get(
   "/users/me",
   createAuthMiddleware("admin", "user"),
-  controller.handleGetUserSelf
+  controller.handleGetUserSelf,
 );
 
 usersRouter.patch(
@@ -51,7 +38,7 @@ usersRouter.patch(
       id: z.coerce.number().positive(),
     }),
   }),
-  controller.handleInvalidateAccessKey
+  controller.handleInvalidateAccessKey,
 );
 
 usersRouter.delete(
@@ -62,7 +49,7 @@ usersRouter.delete(
       id: z.coerce.number().positive(),
     }),
   }),
-  controller.handleDeleteUser
+  controller.handleDeleteUser,
 );
 
 export default usersRouter;

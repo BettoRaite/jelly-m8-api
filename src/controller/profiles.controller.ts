@@ -10,6 +10,7 @@ import type { JwtPayload } from "jsonwebtoken";
 import type { CreateComplimentPayload } from "@/schemas/compliment.schema";
 import * as profilesService from "@/services/profiles.service";
 import { hasAtLeastOneField } from "@/lib/utils/object";
+import { tryUploadProfileImage } from "@/services/storage.service";
 
 export const handleCreateProfile = async (req: Request, res: Response) => {
   const payload = req.body as CreateProfilePayload;
@@ -19,8 +20,14 @@ export const handleCreateProfile = async (req: Request, res: Response) => {
       message: "Profile with such name already exists",
     });
   }
+  const { bio = "", name = "", isActivated = false } = payload;
+  const profileImageUrl = await tryUploadProfileImage(payload, req.file);
+
   await db.insert(profiles).values({
-    ...payload,
+    bio,
+    name,
+    isActivated,
+    profileImageUrl: profileImageUrl ?? "",
   });
   res
     .status(httpStatus.CREATED)
@@ -29,7 +36,7 @@ export const handleCreateProfile = async (req: Request, res: Response) => {
 
 export const handleAddComplimentToProfile = async (
   req: TypedRequest<any, any, { profileId: number }>,
-  res: Response
+  res: Response,
 ) => {
   const { userId, role } = req.payload as JwtPayload;
   const payload = req.body as CreateComplimentPayload;
@@ -47,8 +54,8 @@ export const handleAddComplimentToProfile = async (
     .where(
       and(
         eq(compliments.userId, userId),
-        eq(compliments.profileId, profileId as number)
-      )
+        eq(compliments.profileId, profileId as number),
+      ),
     );
   if (result.length > 0 && role !== "admin") {
     return res.status(httpStatus.CONFLICT).json({
@@ -95,7 +102,7 @@ export const handleGetProfiles = async (_: Request, res: Response) => {
 
 export const handleGetProfileCompliments = async (
   req: TypedRequest<any, any, { profileId: number }>,
-  res: Response
+  res: Response,
 ) => {
   const { profileId } = req.params;
   const profile = await getProfileById(profileId as number);
@@ -154,7 +161,7 @@ export const handleDeleteProfile = async (
       profileId: number;
     }
   >,
-  res: Response
+  res: Response,
 ) => {
   const { profileId } = req.params;
   const result = await profilesService.deleteProfile(profileId as number);

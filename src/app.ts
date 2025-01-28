@@ -20,7 +20,11 @@ const app: Express = express();
 app.use(helmet.frameguard({ action: "deny" }));
 
 // parse json request body
-app.use(express.json());
+app.use(
+  express.json({
+    type: ["application/json"],
+  }),
+);
 
 // parse urlencoded request body
 app.use(express.urlencoded({ extended: true }));
@@ -46,7 +50,7 @@ app.get(
     res.status(httpStatus.OK).json({
       message: "Hello there!",
     });
-  }
+  },
 );
 
 app.use(errorHandler);

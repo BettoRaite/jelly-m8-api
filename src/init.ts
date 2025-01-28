@@ -15,11 +15,12 @@ if (config.node_env === "development") {
           accessKey: key,
           name,
           role: "admin",
+          profileImageUrl: config.supabase.default_profile_image_url ?? "",
         });
       }
 
       console.log(
-        `Successfully created admin\nAccess key: ${user?.accessKey ?? key}`
+        `Successfully created admin\nAccess key: ${user?.accessKey ?? key}`,
       );
     } catch (err) {
       console.log("Failed to create admin", err);

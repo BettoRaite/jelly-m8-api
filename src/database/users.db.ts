@@ -7,11 +7,11 @@ export const getUserById = async (id: string | number) => {
   if (typeof id === "string") {
     parsedId = Number.parseInt(id);
   }
-  return (await db.select().from(users).where(eq(users.id, parsedId)))[0];
+  return (await db.select().from(users).where(eq(users.id, parsedId))).at(0);
 };
 
 export const getUserByName = async (name: string) => {
-  return (await db.select().from(users).where(eq(users.name, name)))[0];
+  return (await db.select().from(users).where(eq(users.name, name))).at(0);
 };
 
 export const getUserByAccessKey = async (accessKey: string) => {

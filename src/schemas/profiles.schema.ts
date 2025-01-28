@@ -1,7 +1,9 @@
 import z from "zod";
 import type { ProfilesInsert } from "@/database/schema";
 
-export const createProfileSchema: z.ZodType<ProfilesInsert> = z.object({
+export const createProfileSchema: z.ZodType<
+  Omit<ProfilesInsert, "profileImageUrl">
+> = z.object({
   name: z.string().trim().min(3),
   bio: z.string().trim().min(3),
 });

@@ -1,24 +1,18 @@
 import db from "@/database";
 import { users } from "@/database/schema";
 import { getUserById, getUserByName } from "@/database/users.db";
-import config from "@/lib/config/config";
 import type { CreateUserPayload } from "@/schemas/users.schema";
-import { tryUploadUserProfileImage } from "@/services/storage.service";
 import { eq } from "drizzle-orm";
-import type { NextFunction, Request, Response } from "express";
+import type { Request, Response } from "express";
 import httpStatus from "http-status";
-import { JwtPayload } from "jsonwebtoken";
+import type { JwtPayload } from "jsonwebtoken";
 import { v4 as uuidv4 } from "uuid";
-import formidable from "formidable";
+import * as usersService from "@/services/users.service";
 
-export const handleCreateUser = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
+export const handleCreateUser = async (req: Request, res: Response) => {
   const payload = req.body as CreateUserPayload;
-  const { name = "dddd", role = "user" } = payload;
-  const { file } = req;
+  const { name = "dddd" } = payload;
+
   const storedUser = await getUserByName(name);
   if (storedUser) {
     return res.status(httpStatus.CONFLICT).json({
@@ -26,31 +20,17 @@ export const handleCreateUser = async (
     });
   }
 
-  if (file) {
-    const profileImageUrl = await tryUploadUserProfileImage(file, payload);
-  }
+  await usersService.createUser(payload, req.file);
 
-  const accessKey = uuidv4();
-  await db.insert(users).values({
-    name,
-    role,
-    accessKey,
-    profileImageUrl: config.supabase.default_profile_image_url,
-  });
-
-  // Sending back user access key
   res.status(httpStatus.CREATED).json({
     message: "Successfully created user",
-    data: {
-      accessKey,
-    },
   });
 };
 
 export const handleGetUsers = async (_: Request, res: Response) => {
-  const result = await db.select().from(users);
+  const users = await usersService.getUsers();
   res.status(httpStatus.OK).json({
-    data: result,
+    data: users,
   });
 };
 
@@ -68,7 +48,7 @@ export const handleGetUserSelf = async (req: Request, res: Response) => {
 
 export const handleInvalidateAccessKey = async (
   req: Request,
-  res: Response
+  res: Response,
 ) => {
   const { id } = req.params;
   // Making sure that user actually exists
@@ -103,7 +83,7 @@ export const handleDeleteUser = async (req: Request, res: Response) => {
       message: "User with given id does not exist",
     });
   }
-  await db.delete(users).where(eq(users.id, id as unknown as number));
+  await usersService.deleteUser(Number.parseInt(id!) as number);
   res.status(httpStatus.OK).json({
     message: "Successfully deleted user",
   });

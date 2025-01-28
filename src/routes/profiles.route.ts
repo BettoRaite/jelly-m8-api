@@ -10,18 +10,20 @@ import {
   handleGetProfiles,
   handleUpdateProfile,
 } from "@/controller/profiles.controller";
+import * as profilesController from "@/controller/profiles.controller";
 import { createProfileSchema } from "@/schemas/profiles.schema";
 import { createComplimentSchema } from "@/schemas/compliment.schema";
-
+import multer from "multer";
+import { storageConfig } from "@/lib/config/storage";
+const upload = multer({ storage: storageConfig });
 const profilesRouter: Router = Router();
 
 profilesRouter.post(
   "/profiles",
   createAuthMiddleware("admin"),
-  validate({
-    body: createProfileSchema,
-  }),
-  handleCreateProfile
+  upload.single("profileImage"),
+  validate({ body: createProfileSchema }),
+  profilesController.handleCreateProfile,
 );
 
 profilesRouter.post(
@@ -30,32 +32,32 @@ profilesRouter.post(
   validate({
     body: createComplimentSchema,
   }),
-  handleAddComplimentToProfile
+  handleAddComplimentToProfile,
 );
 
 profilesRouter.post(
   "/profiles/activate",
   createAuthMiddleware("admin"),
-  handleActivateProfiles
+  handleActivateProfiles,
 );
 
 profilesRouter.get("/profiles", handleGetProfiles);
 
 profilesRouter.get(
   "/profiles/:profileId/compliments",
-  handleGetProfileCompliments
+  handleGetProfileCompliments,
 );
 
 profilesRouter.patch(
   "/profiles/:profileId",
   createAuthMiddleware("admin"),
-  handleUpdateProfile
+  handleUpdateProfile,
 );
 
 profilesRouter.delete(
   "/profiles/:profileId",
   createAuthMiddleware("admin"),
-  handleDeleteProfile
+  handleDeleteProfile,
 );
 
 export default profilesRouter;

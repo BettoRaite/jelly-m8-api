@@ -12,7 +12,7 @@ import {
 export const users = pgTable("users", {
   id: serial("id").primaryKey(),
   name: varchar("name", { length: 100 }).notNull().unique(),
-  profileImageUrl: varchar({ length: 500 }),
+  profileImageUrl: varchar({ length: 500 }).notNull(),
   role: varchar("role", { length: 10 }).notNull(),
   accessKey: varchar("access_key", { length: 255 }).notNull(),
 });
@@ -24,6 +24,7 @@ export const profiles = pgTable("profiles", {
   name: varchar("name", { length: 100 }).notNull(),
   bio: text("bio").notNull(),
   isActivated: boolean().default(false),
+  profileImageUrl: varchar({ length: 500 }).notNull(),
 });
 
 // Compliments Table
@@ -43,7 +44,7 @@ export const compliments = pgTable(
     {
       userIdProfileIdConstrain: unique().on(t.userId, t.profileId),
     },
-  ]
+  ],
 );
 
 export type UsersInsert = typeof users.$inferInsert; // Type for inserting a user
