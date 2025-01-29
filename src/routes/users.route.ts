@@ -6,32 +6,40 @@ import { createUserSchema } from "@/schemas/users.schema";
 import z from "zod";
 import multer from "multer";
 import { storageConfig } from "@/lib/config/storage";
+import { createProfileSchema } from "@/schemas/profiles.schema";
 
 const usersRouter: Router = Router();
 
-const upload = multer({ storage: storageConfig });
+// Create user
 usersRouter.post(
   "/users",
   createAuthMiddleware("admin"),
-  upload.single("profileImage"),
   validate({ body: createUserSchema }),
   controller.handleCreateUser,
 );
 
+// Create user profile
+usersRouter.post(
+  "/users/:id/profile",
+  createAuthMiddleware("admin"),
+  validate({ body: createProfileSchema }),
+  controller.handleCreateUser,
+);
+// Get all users
 usersRouter.get(
   "/users",
   createAuthMiddleware("admin"),
   controller.handleGetUsers,
 );
-
+// Get user profile
 usersRouter.get(
-  "/users/me",
+  "/users/:id/profile",
   createAuthMiddleware("admin", "user"),
   controller.handleGetUserSelf,
 );
-
+// Invalidate access token
 usersRouter.patch(
-  "/users/:id/access-token/invalidate",
+  "/users/:id/access-secret/invalidate",
   createAuthMiddleware("admin"),
   validate({
     params: z.object({
@@ -41,8 +49,26 @@ usersRouter.patch(
   controller.handleInvalidateAccessKey,
 );
 
+usersRouter.post(
+  "/users/:id/profile",
+  createAuthMiddleware("admin"),
+  validate({ body: createProfileSchema }),
+  controller.handleCreateUser,
+);
+
 usersRouter.delete(
   "/users/:id",
+  createAuthMiddleware("admin"),
+  validate({
+    params: z.object({
+      id: z.coerce.number().positive(),
+    }),
+  }),
+  controller.handleDeleteUser,
+);
+
+usersRouter.delete(
+  "/users/:id/profile",
   createAuthMiddleware("admin"),
   validate({
     params: z.object({

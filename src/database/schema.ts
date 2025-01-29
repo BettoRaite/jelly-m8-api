@@ -12,7 +12,6 @@ import {
 export const UserTable = pgTable("User", {
   id: serial("id").primaryKey(),
   username: varchar("username", { length: 100 }).notNull().unique(),
-  profileImageUrl: varchar("profile_image_url", { length: 500 }).notNull(),
   userRole: varchar("user_role", { length: 10 }).notNull(),
   accessSecret: varchar("access_token", { length: 255 }).notNull(),
 });
@@ -25,8 +24,9 @@ export const UserProfileTable = pgTable("UserProfile", {
     .unique()
     .references(() => UserTable.id), // Foreign key referencing UserTable
   displayName: varchar("display_name", { length: 100 }).notNull(),
+  gender: varchar("user_role", { length: 10 }).notNull(),
   biography: text("biography").notNull(),
-  isActive: boolean("is_active").default(false),
+  isActivated: boolean("is_active").default(false),
   profileImageUrl: varchar("profile_image_url", { length: 500 }).notNull(),
 });
 
