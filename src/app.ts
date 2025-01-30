@@ -1,4 +1,4 @@
-import express, { Request, type Express, Response } from "express";
+import express, { type Request, type Express, type Response } from "express";
 import cors from "cors";
 import helmet from "helmet";
 import compression from "compression";

@@ -18,7 +18,7 @@ export const handleUpdateCompliment = async (
       complimentId: number;
     }
   >,
-  res: Response
+  res: Response,
 ) => {
   const { complimentId } = req.params;
   const payload = req.body as Partial<CreateComplimentPayload>;
@@ -37,7 +37,7 @@ export const handleUpdateCompliment = async (
     // We check whether the resource belongs to the current user
     const ownsCompliment = await checkUserComplimentOwnership(
       userId as number,
-      complimentId as number
+      complimentId as number,
     );
     if (!ownsCompliment) {
       return res.status(httpStatus.FORBIDDEN).json({
@@ -69,7 +69,7 @@ export const handleDeleteCompliment = async (
       complimentId: number;
     }
   >,
-  res: Response
+  res: Response,
 ) => {
   const { complimentId } = req.params;
   const { userId, role } = req.payload as JwtPayload;
@@ -85,7 +85,7 @@ export const handleDeleteCompliment = async (
     // We check whether the resource belongs to the current user
     const ownsCompliment = await checkUserComplimentOwnership(
       userId as number,
-      complimentId as number
+      complimentId as number,
     );
     if (!ownsCompliment) {
       return res.status(httpStatus.FORBIDDEN).json({

@@ -1,12 +1,11 @@
 import z from "zod";
-import type { UsersSelect } from "@/database/schema";
+import type { UserSelect } from "@/database/schema";
 
-interface CreateProfileSchema
-  extends Omit<UsersSelect, "id" | "accessKey" | "profileImageUrl"> {}
+interface CreateUserSchema extends Omit<UserSelect, "id" | "accessSecret"> {}
 
-export const createUserSchema: z.ZodType<CreateProfileSchema> = z.object({
-  name: z.string().trim().min(3),
-  role: z.enum(["admin", "user"]),
+export const createUserSchema: z.ZodType<CreateUserSchema> = z.object({
+  username: z.string().trim().min(3),
+  userRole: z.enum(["admin", "user"]),
 });
 
 export type CreateUserPayload = z.infer<typeof createUserSchema>;

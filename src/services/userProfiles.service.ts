@@ -1,9 +1,23 @@
 import db from "@/database";
-import { getProfileById } from "@/database/profiles.db";
-import { profiles } from "@/database/schema";
+import { UserProfilesTable } from "@/database/schema";
+import { getRandSecret } from "@/lib/utils/random";
 import logger from "@/middleware/logger";
+import type { CreateUserProfilePayload } from "@/schemas/userProfile.schema";
 import { eq } from "drizzle-orm";
 import httpStatus from "http-status";
+
+export const createUserProfile = async (
+  userId: number,
+  payload: CreateUserProfilePayload,
+  imageUrl: string,
+) => {
+  await db.insert(UserProfilesTable).values({
+    ...payload,
+    userId,
+    activationSecret: getRandSecret(),
+    profileImageUrl: imageUrl,
+  });
+};
 
 type OperationResult =
   | {
@@ -19,10 +33,10 @@ type OperationResult =
     };
 
 export const setProfilesActivation = async (
-  activation: boolean
+  activation: boolean,
 ): Promise<OperationResult> => {
   try {
-    const { count } = await db.update(profiles).set({
+    const { count } = await db.update(UserProfilesTable).set({
       isActivated: activation,
     });
     return {
@@ -64,4 +78,8 @@ export const deleteProfile = async (id: number): Promise<OperationResult> => {
       status: httpStatus.INTERNAL_SERVER_ERROR,
     };
   }
+};
+
+const userProfilesService = {
+  createUserProfile,
 };

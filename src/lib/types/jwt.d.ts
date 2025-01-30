@@ -2,8 +2,8 @@ declare module "jsonwebtoken" {
   // eslint-disable-next-line @typescript-eslint/no-empty-interface
   export interface JwtPayload {
     userId: number;
-    accessKey?: string;
-    role: string;
+    accessSecret?: string;
+    userRole: string;
   }
 
   // eslint-disable-next-line @typescript-eslint/no-empty-interface

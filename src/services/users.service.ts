@@ -1,26 +1,39 @@
-import type { CreateUserPayload } from "@/schemas/users.schema";
-import { v4 as uuidv4 } from "uuid";
 import db from "@/database";
-import { UserTable } from "@/database/schema";
-import { eq } from "drizzle-orm";
-import config from "@/lib/config/config";
+import {
+  type UserSelect,
+  UsersTable,
+  type UserInsert,
+} from "@/database/schema";
+import { and, eq } from "drizzle-orm";
+import logger from "@/middleware/logger";
+import type { CreateUserPayload } from "@/schemas/user.schema";
+import { getRandSecret } from "@/lib/utils/random";
 
-export const createUser = async (payload: CreateUserPayload) => {
-  const { name: username, role } = payload;
-  const accessKey = uuidv4();
-  await db.insert(UserTable).values({
-    username,
-    userRole: role,
-    accessSecret: accessKey,
+interface Payload extends CreateUserPayload {
+  accessSecret?: string;
+}
+export const createUser = async (payload: UserInsert | Payload) => {
+  if (!payload.accessSecret) {
+    payload.accessSecret = getRandSecret();
+  }
+  await db.insert(UsersTable).values({
+    ...(payload as UserInsert),
   });
 };
 
-export const deleteUser = async (id: number) => {
-  await db.delete(UserTable).where(eq(UserTable.id, id));
+const invalidateUserAccessSecret = async (id: number) => {
+  const accessSecret = getRandSecret();
+  // To invalidate user session we simply update access token
+  await db
+    .update(UsersTable)
+    .set({
+      accessSecret,
+    })
+    .where(eq(UsersTable.id, id as unknown as number));
 };
 
 export const getUsers = async () =>
-  await db.select().from(UserTable).orderBy(UserTable.id);
+  await db.select().from(UsersTable).orderBy(UsersTable.id);
 
 export const getUserById = async (id: string | number) => {
   let parsedId = id as number;
@@ -28,18 +41,71 @@ export const getUserById = async (id: string | number) => {
     parsedId = Number.parseInt(id);
   }
   return (
-    await db.select().from(UserTable).where(eq(UserTable.id, parsedId))
+    await db.select().from(UsersTable).where(eq(UsersTable.id, parsedId))
   ).at(0);
 };
 
 export const getUserByName = async (name: string) => {
-  return (await db.select().from(UserTable).where(eq(UserTable.name, name))).at(
-    0,
-  );
+  return (
+    await db.select().from(UsersTable).where(eq(UsersTable.username, name))
+  ).at(0);
 };
 
-export const getUserByAccessKey = async (accessKey: string) => {
+export const getUserByAccessSecret = async (accessSecret: string) => {
   return (
-    await db.select().from(UserTable).where(eq(UserTable.accessKey, accessKey))
-  )[0];
+    await db
+      .select()
+      .from(UsersTable)
+      .where(eq(UsersTable.accessSecret, accessSecret))
+  ).at(0);
 };
+
+export const getUserByRole = async (accessSecret: string) => {
+  return (
+    await db
+      .select()
+      .from(UsersTable)
+      .where(eq(UsersTable.accessSecret, accessSecret))
+  ).at(0);
+};
+
+export const getUserBy = async (queryColumns: Partial<UserSelect>) => {
+  try {
+    const keys = Object.keys(queryColumns);
+    if (keys.length === 0) {
+      throw new Error(`no query columns: ${queryColumns}`);
+    }
+    const whereQuery = [];
+    for (const k of keys) {
+      whereQuery.push(
+        eq(
+          UsersTable[k as keyof UserSelect],
+          queryColumns[k as keyof UserSelect] as number | string,
+        ),
+      );
+    }
+    return (
+      await db
+        .select()
+        .from(UsersTable)
+        .where(and(...whereQuery))
+    ).at(0);
+  } catch (err) {
+    logger.error(err);
+    return null;
+  }
+};
+
+export const deleteUser = async (id: number) => {
+  await db.delete(UsersTable).where(eq(UsersTable.id, id));
+};
+
+const usersService = {
+  createUser,
+  getUserBy,
+  invalidateUserAccessSecret,
+  getUsers,
+  deleteUser,
+};
+
+export default usersService;

@@ -2,11 +2,11 @@ import { Router } from "express";
 import * as controller from "@/controller/users.controller";
 import createAuthMiddleware from "@/middleware/auth";
 import validate from "@/middleware/validate";
-import { createUserSchema } from "@/schemas/users.schema";
+import { createUserSchema } from "@/schemas/user.schema";
 import z from "zod";
 import multer from "multer";
 import { storageConfig } from "@/lib/config/storage";
-import { createProfileSchema } from "@/schemas/profiles.schema";
+import { createProfileSchema } from "@/schemas/profile.schema";
 
 const usersRouter: Router = Router();
 
