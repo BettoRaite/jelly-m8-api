@@ -4,8 +4,11 @@ import type { UserSelect } from "@/database/schema";
 interface CreateUserSchema extends Omit<UserSelect, "id" | "accessSecret"> {}
 
 export const createUserSchema: z.ZodType<CreateUserSchema> = z.object({
+  accessSecret: z.string().optional(),
   username: z.string().trim().min(3),
   userRole: z.enum(["admin", "user"]),
 });
 
-export type CreateUserPayload = z.infer<typeof createUserSchema>;
+export interface CreateUserPayload extends z.infer<typeof createUserSchema> {
+  accessSecret?: string;
+}

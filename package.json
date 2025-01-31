@@ -8,7 +8,7 @@
   "main": "./dist/index.js",
   "type": "commonjs",
   "scripts": {
-    "dev": "drizzle-kit push & tsx --tsconfig ./tsconfig.json ./src/index.ts",
+    "dev": "drizzle-kit push & tsx --tsconfig ./tsconfig.json ./src/server.ts",
     "build": "tsc --project './tsconfig.build.json'",
     "start": "pnpm run build && cross-env NODE_ENV=production node --trace-warnings ./dist/index.js",
     "lint": "biome lint --write src/**/*.ts __test__/**/*.test.ts",

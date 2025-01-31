@@ -9,7 +9,7 @@ export const storageConfig = multer.diskStorage({
     const extension = file.originalname.slice(
       file.originalname.lastIndexOf("."),
     );
-    const fileName = `${uuidv4()}.${extension}`;
+    const fileName = `${uuidv4()}${extension}`;
     cb(null, fileName);
   },
 });

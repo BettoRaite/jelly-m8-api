@@ -6,13 +6,10 @@ import {
 } from "@/database/schema";
 import { and, eq } from "drizzle-orm";
 import logger from "@/middleware/logger";
-import type { CreateUserPayload } from "@/schemas/user.schema";
+import type { CreateUserPayload } from "./user.schema";
 import { getRandSecret } from "@/lib/utils/random";
 
-interface Payload extends CreateUserPayload {
-  accessSecret?: string;
-}
-export const createUser = async (payload: UserInsert | Payload) => {
+export const createUser = async (payload: CreateUserPayload) => {
   if (!payload.accessSecret) {
     payload.accessSecret = getRandSecret();
   }
@@ -21,7 +18,7 @@ export const createUser = async (payload: UserInsert | Payload) => {
   });
 };
 
-const invalidateUserAccessSecret = async (id: number) => {
+export const invalidateUserAccessSecret = async (id: number) => {
   const accessSecret = getRandSecret();
   // To invalidate user session we simply update access token
   await db
@@ -99,13 +96,3 @@ export const getUserBy = async (queryColumns: Partial<UserSelect>) => {
 export const deleteUser = async (id: number) => {
   await db.delete(UsersTable).where(eq(UsersTable.id, id));
 };
-
-const usersService = {
-  createUser,
-  getUserBy,
-  invalidateUserAccessSecret,
-  getUsers,
-  deleteUser,
-};
-
-export default usersService;

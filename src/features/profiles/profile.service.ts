@@ -2,11 +2,11 @@ import db from "@/database";
 import { UserProfilesTable } from "@/database/schema";
 import { getRandSecret } from "@/lib/utils/random";
 import logger from "@/middleware/logger";
-import type { CreateUserProfilePayload } from "@/schemas/userProfile.schema";
+import type { CreateUserProfilePayload } from "./profile.schema";
 import { eq } from "drizzle-orm";
 import httpStatus from "http-status";
 
-export const createUserProfile = async (
+export const createProfile = async (
   userId: number,
   payload: CreateUserProfilePayload,
   imageUrl: string,
@@ -83,3 +83,5 @@ export const deleteProfile = async (id: number): Promise<OperationResult> => {
 const userProfilesService = {
   createUserProfile,
 };
+
+export default userProfilesService;

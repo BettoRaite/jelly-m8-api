@@ -8,30 +8,52 @@ import type { CreateProfilePayload } from "@/schemas/profiles.schema";
 import type { TypedRequest } from "@/lib/types/types";
 import type { JwtPayload } from "jsonwebtoken";
 import type { CreateComplimentPayload } from "@/schemas/compliment.schema";
-import * as profilesService from "@/services/profiles.service";
+import * as profileService from "./profile.service";
 import { hasAtLeastOneField } from "@/lib/utils/object";
 import { tryUploadProfileImage } from "@/services/storage.service";
+import type { CreateUserProfilePayload } from "./profile.schema";
+import usersService from "../users/user.service";
 
-export const handleCreateProfile = async (req: Request, res: Response) => {
-  const payload = req.body as CreateProfilePayload;
-  const profile = await getProfileByName(payload.name);
-  if (profile) {
-    return res.status(httpStatus.CONFLICT).json({
-      message: "Profile with such name already exists",
+export const handleCreateProfile = async (
+  req: TypedRequest<
+    CreateUserProfilePayload,
+    unknown,
+    {
+      id: number;
+    }
+  >,
+  res: Response,
+) => {
+  const payload = req.body as CreateUserProfilePayload;
+  const userId = req.params.id as number;
+
+  const storedUser = await usersService.getUserBy({
+    id: userId,
+  });
+
+  if (!storedUser) {
+    return res.status(httpStatus.NOT_FOUND).json({
+      message: "user with given id does not exist",
     });
   }
-  const { bio = "", name = "", isActivated = false } = payload;
-  const profileImageUrl = await tryUploadProfileImage(payload, req.file);
 
-  await db.insert(profiles).values({
-    bio,
-    name,
-    isActivated,
-    profileImageUrl: profileImageUrl ?? "",
+  await profileService.createProfile(
+    userId,
+    payload,
+    req.file?.filename as string,
+  );
+
+  res.status(httpStatus.CREATED).json({
+    message: "Successfully created a user profile",
   });
-  res
-    .status(httpStatus.CREATED)
-    .json({ message: "Successfully created profile" });
+};
+
+// Will need to join the compliments with the
+export const handleGetProfiles = async (_: Request, res: Response) => {
+  const result = await db.select().from(profiles);
+  res.status(httpStatus.OK).json({
+    data: result,
+  });
 };
 
 export const handleAddComplimentToProfile = async (
@@ -89,14 +111,6 @@ export const handleDeactivateProfiles = async (_: Request, res: Response) => {
   }
   res.status(httpStatus.OK).json({
     message: "Successfully deactivated all profiles",
-  });
-};
-
-// Will need to join the compliments with the
-export const handleGetProfiles = async (_: Request, res: Response) => {
-  const result = await db.select().from(profiles);
-  res.status(httpStatus.OK).json({
-    data: result,
   });
 };
 

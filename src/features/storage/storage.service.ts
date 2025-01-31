@@ -1,9 +1,9 @@
-import type { CreateUserPayload } from "@/schemas/users.schema";
+import type { CreateUserPayload } from "@/schemas/user.schema";
 import { createClient } from "@supabase/supabase-js";
 import config from "@/lib/config/config";
 import logger from "@/middleware/logger";
 import fs from "node:fs/promises";
-import type { CreateProfilePayload } from "@/schemas/profiles.schema";
+import type { CreateUserProfilePayload } from "@/schemas/userProfile.schema";
 // Create Supabase client
 const supabase = createClient(
   config.supabase.project_url,
@@ -53,7 +53,7 @@ export const tryUploadUserProfileImage = async (
 };
 
 export const tryUploadProfileImage = async (
-  profile: CreateProfilePayload,
+  profile: CreateUserProfilePayload,
   profileImage?: Express.Multer.File,
 ) => {
   try {

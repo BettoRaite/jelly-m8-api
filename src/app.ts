@@ -4,7 +4,7 @@ import helmet from "helmet";
 import compression from "compression";
 import cookieParser from "cookie-parser";
 import compressFilter from "./lib/utils/compressFilter.util";
-import router from "./routes";
+import router from "./routing";
 import errorHandler from "./middleware/errorHandler";
 import config from "./lib/config/config";
 import authLimiter from "./middleware/authLimiter";
@@ -19,15 +19,8 @@ const app: Express = express();
 // Helmet is used to secure this app by configuring the http-header
 app.use(helmet.frameguard({ action: "deny" }));
 
-// parse json request body
-app.use(
-  express.json({
-    type: ["application/json"],
-  }),
-);
-
-// parse urlencoded request body
 app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
 
 app.use(xssMiddleware());
 
