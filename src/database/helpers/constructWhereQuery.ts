@@ -1,11 +1,8 @@
 import {
   eq,
-  type Column,
-  type ColumnBaseConfig,
-  type ColumnDataType,
-  type Table,
   SQL,
-  SQLWrapper,
+  type Table,
+ type SQLWrapper,
 } from "drizzle-orm";
 export const constructWhereQuery = <T extends Record<string, unknown>>({
   table,

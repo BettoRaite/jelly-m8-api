@@ -95,7 +95,7 @@ export const deleteProfile = async (
     queryOptions,
   });
 
-  await db.delete(UserProfilesTable).where(and(...whereQuery));
+  await db.delete(UserProfilesTable).where(and(eq(UserProfilesTable.userId, queryOptions.userId as number)));
 };
 
 const profileService = {

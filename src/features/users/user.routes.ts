@@ -44,16 +44,6 @@ usersRouter.delete(
   }),
   controller.handleDeleteUser,
 );
-// Delete user profile
-usersRouter.delete(
-  "/users/:id/profile",
-  createAuthMiddleware("admin"),
-  validate({
-    params: z.object({
-      id: z.coerce.number().positive(),
-    }),
-  }),
-  controller.handleDeleteUser,
-);
+
 
 export default usersRouter;

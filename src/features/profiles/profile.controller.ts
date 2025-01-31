@@ -179,15 +179,12 @@ export const handleDeleteProfile = async (
     userId,
   });
   if (!exists) {
-    return {
-      isError: true,
-      message: "Profile with given id does not exist",
-      status: httpStatus.NOT_FOUND,
-    };
+    return res.status(httpStatus.NOT_FOUND);
   }
   await profileService.deleteProfile({
     userId,
   });
+
   res.status(httpStatus.OK).json({
     message: "Successfully delete user profile",
   });

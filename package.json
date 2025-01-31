@@ -16,7 +16,7 @@
     "test": "",
     "test:watch": "",
     "coverage": "",
-    "prepare": "husky"
+    // "prepare": "husky"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.48.0",
