@@ -1,4 +1,4 @@
-import type { UserLoginPayload } from "@/schemas/login.schema";
+import type { UserLoginPayload } from "./login.schema";
 import type { Request, Response } from "express";
 import httpStatus from "http-status";
 import { createAccessToken } from "@/lib/utils/token.util";
@@ -7,12 +7,12 @@ import {
   accessTokenCookieConfig,
   clearAccessTokenCookieConfig,
 } from "@/lib/config/cookieConfig";
-import usersService from "@/services/users.service";
+import * as userService from "../users/user.service";
 
 export const handleLogin = async (req: Request, res: Response) => {
   const { accessSecret } = req.body as UserLoginPayload;
 
-  const user = await usersService.getUserBy({
+  const user = await userService.getUserBy({
     accessSecret,
   });
   // In case the access secret is invalid

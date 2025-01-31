@@ -5,12 +5,10 @@ import httpStatus from "http-status";
 import jwt, { type JwtPayload } from "jsonwebtoken";
 import config from "@/lib/config/config";
 import type { Roles } from "@/lib/types/types";
-import usersService from "@/services/users.service";
-
+import userService from "@/features/users/user.service";
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-expect-error
 const { verify } = jwt;
-
 const isAuthenticated = (req: Request, res: Response, next: NextFunction) => {
   const token: string | undefined =
     req.cookies[config.jwt.access_token.cookieName];
@@ -32,7 +30,7 @@ const isAuthenticated = (req: Request, res: Response, next: NextFunction) => {
         try {
           // In case admin invalidates user access secret
           // We need to close the user session
-          const user = await usersService.getUserBy({
+          const user = await userService.getUserBy({
             accessSecret: payload.accessSecret as string,
           });
 

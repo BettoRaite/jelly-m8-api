@@ -1,14 +1,17 @@
-import type { CreateUserPayload } from "@/schemas/user.schema";
+import type { CreateUserPayload } from "../users/user.schema";
 import { createClient } from "@supabase/supabase-js";
 import config from "@/lib/config/config";
 import logger from "@/middleware/logger";
 import fs from "node:fs/promises";
-import type { CreateUserProfilePayload } from "@/schemas/userProfile.schema";
+import type { CreateUserProfilePayload } from "../profiles/profile.schema";
 // Create Supabase client
-const supabase = createClient(
-  config.supabase.project_url,
-  config.supabase.project_api_key,
-);
+
+const supabase = (() => {
+  if (config.node_env !== "development") {
+    createClient(config.supabase.project_url, config.supabase.project_api_key);
+  }
+  return {};
+})();
 
 // Return default profile image url in case no image was uploaded
 export const tryUploadUserProfileImage = async (
@@ -92,3 +95,13 @@ export const tryUploadProfileImage = async (
     return config.supabase.default_profile_image_url ?? "";
   }
 };
+
+export const createLinkToLocalImageFile = (imageName: string) => {
+  return `${config.server.url}/image/${imageName}`;
+};
+
+const storageService = {
+  createLinkToLocalImageFile,
+};
+
+export default storageService;

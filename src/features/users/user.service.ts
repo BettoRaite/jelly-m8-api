@@ -96,3 +96,11 @@ export const getUserBy = async (queryColumns: Partial<UserSelect>) => {
 export const deleteUser = async (id: number) => {
   await db.delete(UsersTable).where(eq(UsersTable.id, id));
 };
+
+const userService = {
+  getUserBy,
+  getUsers,
+  createUser,
+  deleteUser,
+};
+export default userService;

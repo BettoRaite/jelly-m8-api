@@ -1,10 +1,12 @@
 import db from "@/database";
-import { UserProfilesTable } from "@/database/schema";
+import { type UserProfileSelect, UserProfilesTable } from "@/database/schema";
 import { getRandSecret } from "@/lib/utils/random";
 import logger from "@/middleware/logger";
 import type { CreateUserProfilePayload } from "./profile.schema";
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import httpStatus from "http-status";
+import storageService from "../storage/storage.service";
+import { constructWhereQuery } from "@/database/helpers/constructWhereQuery";
 
 export const createProfile = async (
   userId: number,
@@ -15,26 +17,56 @@ export const createProfile = async (
     ...payload,
     userId,
     activationSecret: getRandSecret(),
-    profileImageUrl: imageUrl,
+    profileImageUrl: storageService.createLinkToLocalImageFile(imageUrl),
   });
 };
 
-type OperationResult =
-  | {
-      isError: true;
-      message?: string;
-      status: number;
-      data?: undefined;
-    }
-  | {
-      isError?: false;
-      message?: null;
-      data: unknown;
-    };
+export const getProfiles = async (queryOptions: Partial<UserProfileSelect>) => {
+  const whereQuery = [];
+  for (const k of Object.keys(queryOptions)) {
+    whereQuery.push(
+      eq(
+        UserProfilesTable[k as keyof UserProfileSelect],
+        queryOptions[k as keyof UserProfileSelect] as number | string,
+      ),
+    );
+  }
+  return await db
+    .select()
+    .from(UserProfilesTable)
+    .where(and(...whereQuery));
+};
 
-export const setProfilesActivation = async (
-  activation: boolean,
-): Promise<OperationResult> => {
+export const getProfileBy = async (
+  queryOptions: Partial<UserProfileSelect>,
+) => {
+  try {
+    const keys = Object.keys(queryOptions);
+    if (keys.length === 0) {
+      throw new Error(`query options is empty: ${queryOptions}`);
+    }
+    const whereQuery = [];
+    for (const k of keys) {
+      whereQuery.push(
+        eq(
+          UserProfilesTable[k as keyof UserProfileSelect],
+          queryOptions[k as keyof UserProfileSelect] as number | string,
+        ),
+      );
+    }
+    return (
+      await db
+        .select()
+        .from(UserProfilesTable)
+        .where(and(...whereQuery))
+    ).at(0);
+  } catch (err) {
+    logger.error(err);
+    return null;
+  }
+};
+
+export const setProfilesActivation = async (activation: boolean) => {
   try {
     const { count } = await db.update(UserProfilesTable).set({
       isActivated: activation,
@@ -54,34 +86,21 @@ export const setProfilesActivation = async (
   }
 };
 
-export const deleteProfile = async (id: number): Promise<OperationResult> => {
-  try {
-    const exists = await getProfileById(id);
-    if (!exists) {
-      return {
-        isError: true,
-        message: "Profile with given id does not exist",
-        status: httpStatus.NOT_FOUND,
-      };
-    }
-    const { count } = await db.delete(profiles).where(eq(profiles.id, id));
-    return {
-      data: {
-        count,
-      },
-    };
-  } catch (error) {
-    logger.error(error);
-    return {
-      isError: true,
-      message: (error as Error).message,
-      status: httpStatus.INTERNAL_SERVER_ERROR,
-    };
-  }
+export const deleteProfile = async (
+  queryOptions: Partial<UserProfileSelect>,
+) => {
+  const whereQuery = constructWhereQuery<UserProfileSelect>({
+    table: UserProfilesTable,
+    strict: true,
+    queryOptions,
+  });
+
+  await db.delete(UserProfilesTable).where(and(...whereQuery));
 };
 
-const userProfilesService = {
-  createUserProfile,
+const profileService = {
+  getProfileBy,
+  deleteProfile,
 };
 
-export default userProfilesService;
+export default profileService;

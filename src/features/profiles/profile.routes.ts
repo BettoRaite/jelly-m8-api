@@ -5,6 +5,9 @@ import * as controller from "./profile.controller";
 import multer from "multer";
 import { storageConfig } from "@/lib/config/storage";
 import { createUserProfileSchema } from "./profile.schema";
+import { createComplimentSchema } from "../compliments/compliment.schema";
+import { z } from "zod";
+
 const upload = multer({ storage: storageConfig });
 const profilesRouter: Router = Router();
 
@@ -26,45 +29,45 @@ profilesRouter.get(
 );
 
 profilesRouter.post(
-  "/profiles",
-  createAuthMiddleware("admin"),
-  upload.single("profileImage"),
-  validate({ body: createProfileSchema }),
-  profilesController.handleCreateProfile,
-);
-
-profilesRouter.post(
   "/profiles/:profileId/compliments",
   createAuthMiddleware("user", "admin"),
   validate({
     body: createComplimentSchema,
   }),
-  handleAddComplimentToProfile,
+  controller.handleAddComplimentToProfile,
 );
 
 profilesRouter.post(
   "/profiles/activate",
   createAuthMiddleware("admin"),
-  handleActivateProfiles,
+  controller.handleActivateProfiles,
 );
 
-profilesRouter.get("/profiles", handleGetProfiles);
+profilesRouter.get(
+  "/profiles",
+  validate({
+    query: z.object({
+      gender: z.enum(["male", "female"]).optional(),
+    }),
+  }),
+  controller.handleGetProfiles,
+);
 
 profilesRouter.get(
   "/profiles/:profileId/compliments",
-  handleGetProfileCompliments,
+  controller.handleGetProfileCompliments,
 );
 
 profilesRouter.patch(
   "/profiles/:profileId",
   createAuthMiddleware("admin"),
-  handleUpdateProfile,
+  controller.handleUpdateProfile,
 );
 
 profilesRouter.delete(
-  "/profiles/:profileId",
+  "/users/:userId/profile",
   createAuthMiddleware("admin"),
-  handleDeleteProfile,
+  controller.handleDeleteProfile,
 );
 
 export default profilesRouter;

@@ -1,4 +1,3 @@
-import { Param } from "drizzle-orm";
 import type { NextFunction, Request, Response } from "express";
 import type { DeepPartial } from "utility-types";
 import type { IFilterXSSOptions } from "xss";
@@ -17,7 +16,7 @@ export type RequireAtLeastOne<T> = {
 export type TypedRequest<
   ReqBody = Record<string, unknown>,
   QueryString = Record<string, unknown>,
-  Params = Record<string, unknown>
+  Params = Record<string, unknown>,
 > = Request<
   DeepPartial<Params>,
   Record<string, unknown>,
@@ -29,11 +28,11 @@ export type TypedRequest<
 export type ExpressMiddleware<
   ReqBody = Record<string, unknown>,
   Res = Record<string, unknown>,
-  QueryString = Record<string, unknown>
+  QueryString = Record<string, unknown>,
 > = (
   req: TypedRequest<ReqBody, QueryString>,
   res: Response<Res>,
-  next: NextFunction
+  next: NextFunction,
 ) => Promise<void> | void;
 
 // Example usage from Stackoverflow:
@@ -64,10 +63,10 @@ export interface ResetPasswordRequestBodyType {
 export type Sanitized<T> = T extends (...args: unknown[]) => unknown
   ? T // if T is a function, return it as is
   : T extends object
-  ? {
-      readonly [K in keyof T]: Sanitized<T[K]>;
-    }
-  : T;
+    ? {
+        readonly [K in keyof T]: Sanitized<T[K]>;
+      }
+    : T;
 
 export type SanitizeOptions = IFilterXSSOptions & {
   whiteList?: IFilterXSSOptions["whiteList"];

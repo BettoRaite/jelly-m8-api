@@ -1,18 +1,13 @@
 import db from "@/database";
-import { compliments, profiles, users } from "@/database/schema";
 import { and, eq } from "drizzle-orm";
 import type { Request, Response } from "express";
 import httpStatus from "http-status";
-import { getProfileById, getProfileByName } from "@/database/profiles.db";
-import type { CreateProfilePayload } from "@/schemas/profiles.schema";
+import type { CreateUserProfilePayload } from "./profile.schema";
 import type { TypedRequest } from "@/lib/types/types";
 import type { JwtPayload } from "jsonwebtoken";
-import type { CreateComplimentPayload } from "@/schemas/compliment.schema";
 import * as profileService from "./profile.service";
 import { hasAtLeastOneField } from "@/lib/utils/object";
-import { tryUploadProfileImage } from "@/services/storage.service";
-import type { CreateUserProfilePayload } from "./profile.schema";
-import usersService from "../users/user.service";
+import * as userService from "../users/user.service";
 
 export const handleCreateProfile = async (
   req: TypedRequest<
@@ -27,7 +22,7 @@ export const handleCreateProfile = async (
   const payload = req.body as CreateUserProfilePayload;
   const userId = req.params.id as number;
 
-  const storedUser = await usersService.getUserBy({
+  const storedUser = await userService.getUserBy({
     id: userId,
   });
 
@@ -49,10 +44,12 @@ export const handleCreateProfile = async (
 };
 
 // Will need to join the compliments with the
-export const handleGetProfiles = async (_: Request, res: Response) => {
-  const result = await db.select().from(profiles);
+export const handleGetProfiles = async (req: Request, res: Response) => {
+  const profiles = await profileService.getProfiles({
+    ...req.query,
+  });
   res.status(httpStatus.OK).json({
-    data: result,
+    data: profiles,
   });
 };
 
@@ -172,19 +169,26 @@ export const handleDeleteProfile = async (
     unknown,
     unknown,
     {
-      profileId: number;
+      userId: number;
     }
   >,
   res: Response,
 ) => {
-  const { profileId } = req.params;
-  const result = await profilesService.deleteProfile(profileId as number);
-  if (result.isError) {
-    res.status(result.status).json({
-      message: result.message,
-    });
+  const userId = req.params.userId as number;
+  const exists = await profileService.getProfileBy({
+    userId,
+  });
+  if (!exists) {
+    return {
+      isError: true,
+      message: "Profile with given id does not exist",
+      status: httpStatus.NOT_FOUND,
+    };
   }
+  await profileService.deleteProfile({
+    userId,
+  });
   res.status(httpStatus.OK).json({
-    data: result.data,
+    message: "Successfully delete user profile",
   });
 };
