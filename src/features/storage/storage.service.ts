@@ -97,7 +97,7 @@ export const tryUploadProfileImage = async (
 };
 
 export const createLinkToLocalImageFile = (imageName: string) => {
-  return `${config.server.url}/image/${imageName}`;
+  return `${config.server.url}/api/v1/image/${imageName}`;
 };
 
 const storageService = {

@@ -1,7 +1,7 @@
 import { Router } from "express";
 import * as controller from "./user.controller";
 import createAuthMiddleware from "@/middleware/auth";
-import validate from "@/middleware/validate";
+import { validateRequest } from "@/middleware/validate";
 import { createUserSchema } from "./user.schema";
 import z from "zod";
 
@@ -11,7 +11,7 @@ const usersRouter: Router = Router();
 usersRouter.post(
   "/users",
   createAuthMiddleware("admin"),
-  validate({ body: createUserSchema }),
+  validateRequest({ body: createUserSchema }),
   controller.handleCreateUser,
 );
 
@@ -21,11 +21,17 @@ usersRouter.get(
   createAuthMiddleware("admin"),
   controller.handleGetUsers,
 );
+// Get currently authenticated user
+usersRouter.get(
+  "/users/current",
+  createAuthMiddleware("admin", "user"),
+  controller.handleGetCurrentUser,
+);
 // Invalidate access token
 usersRouter.patch(
   "/users/:id/access-secret/invalidate",
   createAuthMiddleware("admin"),
-  validate({
+  validateRequest({
     params: z.object({
       id: z.coerce.number().positive(),
     }),
@@ -37,13 +43,12 @@ usersRouter.patch(
 usersRouter.delete(
   "/users/:id",
   createAuthMiddleware("admin"),
-  validate({
+  validateRequest({
     params: z.object({
       id: z.coerce.number().positive(),
     }),
   }),
   controller.handleDeleteUser,
 );
-
 
 export default usersRouter;

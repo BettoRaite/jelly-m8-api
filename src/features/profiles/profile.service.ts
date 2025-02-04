@@ -7,16 +7,19 @@ import { and, eq } from "drizzle-orm";
 import httpStatus from "http-status";
 import storageService from "../storage/storage.service";
 import { constructWhereQuery } from "@/database/helpers/constructWhereQuery";
+import config from "@/lib/config/config";
 
 export const createProfile = async (
   userId: number,
   payload: CreateUserProfilePayload,
   imageUrl: string,
 ) => {
+  const activationSecret =
+    config.node_env === "development" ? "unlock" : getRandSecret();
   await db.insert(UserProfilesTable).values({
     ...payload,
     userId,
-    activationSecret: getRandSecret(),
+    activationSecret,
     profileImageUrl: storageService.createLinkToLocalImageFile(imageUrl),
   });
 };
@@ -34,7 +37,8 @@ export const getProfiles = async (queryOptions: Partial<UserProfileSelect>) => {
   return await db
     .select()
     .from(UserProfilesTable)
-    .where(and(...whereQuery));
+    .where(and(...whereQuery))
+    .orderBy(UserProfilesTable.id);
 };
 
 export const getProfileBy = async (
@@ -86,6 +90,15 @@ export const setProfilesActivation = async (activation: boolean) => {
   }
 };
 
+export const setOneProfileActivation = async (id: number, state: boolean) => {
+  await db
+    .update(UserProfilesTable)
+    .set({
+      isActivated: state,
+    })
+    .where(eq(UserProfilesTable.id, id));
+};
+
 export const deleteProfile = async (
   queryOptions: Partial<UserProfileSelect>,
 ) => {
@@ -95,7 +108,7 @@ export const deleteProfile = async (
     queryOptions,
   });
 
-  await db.delete(UserProfilesTable).where(and(eq(UserProfilesTable.userId, queryOptions.userId as number)));
+  await db.delete(UserProfilesTable).where(and(...whereQuery));
 };
 
 const profileService = {

@@ -28,6 +28,16 @@ export const handleGetUsers = async (_: Request, res: Response) => {
   });
 };
 
+export const handleGetCurrentUser = async (req: Request, res: Response) => {
+  const id = req.payload?.userId as number;
+  const user = await userService.getUserBy({
+    id,
+  });
+  res.status(httpStatus.OK).json({
+    data: user,
+  });
+};
+
 export const handleInvalidateAccessKey = async (
   req: TypedRequest<
     unknown,

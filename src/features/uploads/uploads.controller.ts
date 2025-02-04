@@ -14,8 +14,8 @@ export const handleGetUserProfileImage = async (
   res: Response,
 ) => {
   const imageName = req.params.imageName as string;
-  const imagePath = path.join(process.cwd(), imageName); // Construct the full path
-
+  const imagePath = path.join(`${process.cwd()}/tmp/uploads/`, imageName); // Construct the full path
+  console.log(imagePath);
   try {
     await fs.access(imagePath, fs.constants.R_OK);
     res.sendFile(imagePath);

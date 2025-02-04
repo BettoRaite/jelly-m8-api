@@ -1,7 +1,6 @@
 import type { NextFunction, Request, Response } from "express";
 import type { DeepPartial } from "utility-types";
 import type { IFilterXSSOptions } from "xss";
-
 // See this for the following types
 // https://stackoverflow.com/questions/34508081/how-to-add-typescript-definitions-to-express-req-res
 // https://stackoverflow.com/questions/61132262/typescript-deep-partial
@@ -71,3 +70,7 @@ export type Sanitized<T> = T extends (...args: unknown[]) => unknown
 export type SanitizeOptions = IFilterXSSOptions & {
   whiteList?: IFilterXSSOptions["whiteList"];
 };
+
+export type AtLeastOne<T> = {
+  [K in keyof T]: Pick<T, K> & Partial<Omit<T, K>>;
+}[keyof T];

@@ -1,8 +1,7 @@
 {
-  "name": "express-ts-auth-service",
-  "version": "1.0.0",
-  "description": "A ready-to-use authentication service build with express.js, that provides secure and reliable authentication using JSON Web Tokens (JWT) and refresh token rotation",
-  "author": "Louis-Kaan Ay",
+  "name": "jelly-m8-api",
+  "version": "0.1.0",
+  "author": "BettoRaite",
   "license": "MIT",
   "private": false,
   "main": "./dist/index.js",
@@ -15,8 +14,7 @@
     "format": "biome format --write src/**/*.ts __test__/**/*.test.ts",
     "test": "",
     "test:watch": "",
-    "coverage": "",
-    // "prepare": "husky"
+    "coverage": ""
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.48.0",

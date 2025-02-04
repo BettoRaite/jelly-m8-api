@@ -1,9 +1,9 @@
 import {
   eq,
-  SQL,
   type Table,
  type SQLWrapper,
 } from "drizzle-orm";
+
 export const constructWhereQuery = <T extends Record<string, unknown>>({
   table,
   queryOptions,
@@ -13,7 +13,7 @@ export const constructWhereQuery = <T extends Record<string, unknown>>({
   queryOptions: Partial<T>;
   strict?: boolean;
 }) => {
-  const keys = Object.keys(queryOptions);
+  const keys: string[] = Object.keys(queryOptions);
   if (keys.length === 0 && strict) {
     throw new Error(`query options is empty: ${queryOptions}`);
   }
@@ -21,7 +21,7 @@ export const constructWhereQuery = <T extends Record<string, unknown>>({
   for (const k of keys) {
     whereQuery.push(
       eq(
-        table[k as keyof typeof T],
+        table[k],
         queryOptions[k as keyof T] as number | string,
       ),
     );
