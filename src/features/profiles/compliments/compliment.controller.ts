@@ -8,6 +8,7 @@ import type {
   UpdateComplimentPayload,
 } from "./compliment.schema";
 import type { ParamsProfileId } from "../profile.schema";
+import type { JwtPayload } from "jsonwebtoken";
 
 export const handleCreateCompliment = async (
   req: TypedRequest<CreateComplimentPayload, unknown, ParamsProfileId>,
@@ -15,17 +16,20 @@ export const handleCreateCompliment = async (
 ) => {
   const payload = req.body as CreateComplimentPayload;
   const profileId = req.params.profileId as number;
-  const userId = req.payload?.userId as number;
+  const { userId, userRole } = req.payload as JwtPayload;
 
-  const hasComplimented = await complimentService.getComplimentBy({
-    userId,
-    profileId,
-  });
-  if (hasComplimented) {
-    return res.status(httpStatus.CONFLICT).json({
-      message: "Compliment for given profile already exists",
+  if (userRole !== "admin") {
+    const hasComplimented = await complimentService.getComplimentBy({
+      userId,
+      profileId,
     });
+    if (hasComplimented) {
+      return res.status(httpStatus.CONFLICT).json({
+        message: "Compliment for given profile already exists",
+      });
+    }
   }
+  console.log(req.payload);
   await complimentService.createCompliment({
     userId,
     profileId,

@@ -35,7 +35,7 @@ export const UserProfilesTable = pgTable(
       enum: ["male", "female"],
     }).notNull(),
     biography: text("biography").notNull(),
-    isActivated: boolean("is_active").default(false),
+    isActivated: boolean().default(false),
     activationSecret: varchar({ length: 255 }).notNull(),
     profileImageUrl: varchar("profile_image_url", { length: 500 }).notNull(),
   },
@@ -51,16 +51,18 @@ export const ComplimentsTable = pgTable(
   "ComplimentsTable",
   {
     id: serial("id").primaryKey(),
-    title: varchar({
+    title: varchar("title", {
       length: 255,
     }).notNull(),
-    content: text("message_content").notNull(),
+    content: text().notNull(),
     userId: integer("user_id")
       .notNull()
       .references(() => UsersTable.id),
     profileId: integer("profile_id")
       .notNull()
-      .references(() => UserProfilesTable.id),
+      .references(() => UserProfilesTable.id, {
+        onDelete: "cascade",
+      }),
   },
   (t) => [
     {
@@ -89,11 +91,9 @@ export const ComplimentLikesTable = pgTable(
   }),
 );
 
-export const QuestionsTable = pgTable("ComplimentsTable", {
+export const QuestionsTable = pgTable("QuestionsTable", {
   id: serial("id").primaryKey(),
-  content: varchar({
-    length: 255,
-  }).notNull(),
+  content: varchar({ length: 255 }).notNull(),
 });
 
 // Type Definitions

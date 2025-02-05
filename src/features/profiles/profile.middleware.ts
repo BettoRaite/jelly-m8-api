@@ -1,4 +1,4 @@
-import { type ParamsProfileId, paramsProfileIdSchema } from "./profile.schema";
+import { paramsProfileIdSchema } from "./profile.schema";
 import type { NextFunction, Response, Request } from "express";
 import profileService from "./profile.service";
 import httpStatus from "http-status";

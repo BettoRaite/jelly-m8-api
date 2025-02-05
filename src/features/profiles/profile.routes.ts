@@ -9,7 +9,7 @@ import {
   paramsProfileIdSchema,
   profileActivationSchema,
 } from "./profile.schema";
-import { createComplimentSchema } from "../compliments/compliment.schema";
+// import { createComplimentSchema } from "../compliments/compliment.schema";
 import { z } from "zod";
 import { handleUnderwork } from "@/shared/default.controller";
 import { ensureProfileExists } from "./profile.middleware";
@@ -25,15 +25,6 @@ profilesRouter.post(
   upload.single("imageFile"),
   validateRequest({ body: createUserProfileSchema }),
   controller.handleCreateProfile,
-);
-
-profilesRouter.post(
-  "/profiles/:profileId/compliments",
-  createAuthMiddleware("user", "admin"),
-  validateRequest({
-    body: createComplimentSchema,
-  }),
-  handleUnderwork,
 );
 
 profilesRouter.post(
@@ -67,8 +58,6 @@ profilesRouter.get(
   createAuthMiddleware("admin", "user"),
   handleUnderwork,
 );
-
-profilesRouter.get("/profiles/:profileId/compliments", handleUnderwork);
 
 profilesRouter.patch(
   "/profiles/:profileId",
