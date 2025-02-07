@@ -29,9 +29,11 @@ profilesRouter.post(
 profilesRouter.get(
   "/profiles",
   validateRequest({
-    query: z.object({
-      gender: z.enum(["male", "female"]).optional(),
-    }),
+    query: z
+      .object({
+        gender: z.enum(["male", "female"]),
+      })
+      .partial(),
   }),
   controller.handleGetProfiles,
 );

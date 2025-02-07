@@ -12,7 +12,7 @@ import type { TypedRequest } from "@/lib/types/types";
 import * as profileService from "./profile.service";
 import * as userService from "../users/user.service";
 import { createLinkToLocalImageFile } from "../storage/storage.service";
-import type { UserProfileInsert } from "@/database/schema";
+import type { UserGender, UserProfileInsert } from "@/database/schema";
 import { profile } from "winston";
 
 export const handleCreateProfile = async (
@@ -72,7 +72,9 @@ export const handleGetProfiles = async (req: Request, res: Response) => {
 export const handleGetProfile = async (
   req: TypedRequest<
     unknown,
-    unknown,
+    {
+      gender: UserGender;
+    },
     {
       userId: number;
     }
