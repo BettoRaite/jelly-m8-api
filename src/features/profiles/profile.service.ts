@@ -1,5 +1,9 @@
 import db from "@/database";
-import { type UserProfileSelect, UserProfilesTable } from "@/database/schema";
+import {
+  type UserProfileSelect,
+  UserProfilesTable,
+  type UserProfileInsert,
+} from "@/database/schema";
 import { getRandSecret } from "@/lib/utils/random";
 import logger from "@/middleware/logger";
 import type { CreateUserProfilePayload } from "./profile.schema";
@@ -70,6 +74,16 @@ export const getProfileBy = async (
   }
 };
 
+export const updateProfile = async (
+  userId: number,
+  payload: Partial<Omit<UserProfileInsert, "id">>,
+): Promise<void> => {
+  await db
+    .update(UserProfilesTable)
+    .set({ ...payload })
+    .where(eq(UserProfilesTable.userId, userId));
+};
+
 export const setProfilesActivation = async (activation: boolean) => {
   try {
     const { count } = await db.update(UserProfilesTable).set({
@@ -114,6 +128,7 @@ export const deleteProfile = async (
 const profileService = {
   getProfileBy,
   deleteProfile,
+  updateProfile,
 };
 
 export default profileService;

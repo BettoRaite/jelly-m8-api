@@ -1,6 +1,6 @@
 import { Router } from "express";
 import createAuthMiddleware from "@/middleware/auth";
-import { ensureProfileExists } from "../profile.middleware";
+import { ensureResourceExists } from "@/middleware/ensureItemExists";
 import * as controller from "./compliment.controller";
 import { validateRequest } from "@/middleware/validate";
 import {
@@ -19,7 +19,7 @@ const complimentRoutes: Router = Router();
 complimentRoutes.post(
   "/profiles/:profileId/compliments",
   createAuthMiddleware("admin", "user"),
-  ensureProfileExists,
+  ensureResourceExists("profile"),
   validateRequest({
     body: createComplimentSchema,
   }),
@@ -28,7 +28,7 @@ complimentRoutes.post(
 // Get all compliments associated with a profile
 complimentRoutes.get(
   "/profiles/:profileId/compliments",
-  ensureProfileExists,
+  ensureResourceExists("profile"),
   controller.handleGetCompliments,
 );
 // Update a compliment
@@ -36,7 +36,7 @@ complimentRoutes.get(
 complimentRoutes.patch(
   "/profiles/:profileId/compliments/:complimentId",
   createAuthMiddleware("admin", "user"),
-  ensureProfileExists,
+  ensureResourceExists("profile"),
   ensureComplimentExists,
   isComplimentOwner,
   validateRequest({
@@ -49,7 +49,7 @@ complimentRoutes.patch(
 complimentRoutes.delete(
   "/profiles/:profileId/compliments/:complimentId",
   createAuthMiddleware("admin", "user"),
-  ensureProfileExists,
+  ensureResourceExists("profile"),
   ensureComplimentExists,
   isComplimentOwner,
   controller.handleDeleteCompliment,

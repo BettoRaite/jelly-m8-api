@@ -20,7 +20,6 @@ export const handleGetUserProfileImage = async (
     await fs.access(imagePath, fs.constants.R_OK);
     res.sendFile(imagePath);
   } catch (err) {
-    console.error(err); // Log error for debugging
     return res.status(404).send("Image not found"); // Send 404 response if file not found
   }
 };

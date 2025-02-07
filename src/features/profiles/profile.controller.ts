@@ -4,12 +4,16 @@ import type {
   CreateUserProfilePayload,
   ParamsProfileId,
   ProfileActivationPayload,
+  UpdateProfilePayload,
   // profileActivationSchema,
 } from "./profile.schema";
 import type { TypedRequest } from "@/lib/types/types";
 // import type { JwtPayload } from "jsonwebtoken";
 import * as profileService from "./profile.service";
 import * as userService from "../users/user.service";
+import { createLinkToLocalImageFile } from "../storage/storage.service";
+import type { UserProfileInsert } from "@/database/schema";
+import { profile } from "winston";
 
 export const handleCreateProfile = async (
   req: TypedRequest<
@@ -70,14 +74,13 @@ export const handleGetProfile = async (
     unknown,
     unknown,
     {
-      profileId: number;
+      userId: number;
     }
   >,
   res: Response,
 ) => {
   const profile = await profileService.getProfileBy({
-    id: req.params.profileId as number,
-    isActivated: true,
+    userId: req.params.userId as number,
   });
   res.status(httpStatus.OK).json({
     data: profile,
@@ -104,59 +107,42 @@ export const handleDeactivateProfiles = async (_: Request, res: Response) => {
   });
 };
 
-// export const handleUpdateProfile = async (req: Request, res: Response) => {
-//   const { id } = req.params;
-//   const payload = req.body as Partial<CreateProfilePayload>;
-//   const profile = await profileService.getProfileById(id as string);
-//   if (!profile) {
-//     return res.status(httpStatus.NOT_FOUND).json({
-//       message: "Profile with such id does not exist",
-//     });
-//   }
-//   if (!hasAtLeastOneField(payload)) {
-//     return res.status(httpStatus.NO_CONTENT).json({
-//       message: "Nothing to update",
-//     });
-//   }
-//   await db
-//     .update(profiles)
-//     .set({
-//       ...payload,
-//     })
-//     .where(eq(profiles.id, id as unknown as number));
-
-//   res.status(httpStatus.OK).json({ message: "Successfully updated profile" });
-// };
-
-export const handleActivateProfile = async (
-  req: TypedRequest<ProfileActivationPayload, unknown, ParamsProfileId>,
-  res: Response,
-) => {
-  const { activationSecret } = req.body;
-  // Check if activation secret is correct
-  const profile = await profileService.getProfileBy({
-    activationSecret: activationSecret as string,
-  });
-  if (!profile) {
-    return res.status(httpStatus.UNAUTHORIZED);
+export const handleUpdateProfile = async (req: Request, res: Response) => {
+  const userId = req.params["userId"] as unknown as number;
+  const payload = req.body as Partial<Omit<UserProfileInsert, "id" | "userId">>;
+  if (req.file) {
+    payload.profileImageUrl = createLinkToLocalImageFile(req.file.filename);
   }
-  await profileService.setOneProfileActivation(profile.id, true);
-  res.status(httpStatus.OK).json({
-    message: "Successfully activated profile",
-  });
+  await profileService.updateProfile(userId, payload);
+
+  res.status(httpStatus.OK).json({ message: "Successfully updated profile" });
 };
 
-// Deactivation is handled by admin
-export const handleDeactivateProfile = async (
-  req: TypedRequest<unknown, unknown, ParamsProfileId>,
+export const handleActivateProfile = async (
+  req: TypedRequest<
+    ProfileActivationPayload,
+    unknown,
+    {
+      userId: number;
+    }
+  >,
   res: Response,
 ) => {
-  await profileService.setOneProfileActivation(
-    req.params.profileId as number,
-    false,
-  );
+  const userId = req.params.userId as number;
+  const { activationSecret } = req.body as ProfileActivationPayload;
+  const exists = await profileService.getProfileBy({
+    activationSecret,
+  });
+  if (!exists) {
+    return res.status(httpStatus.FORBIDDEN).json({
+      message: "Invalid activation secret",
+    });
+  }
+  await profileService.updateProfile(userId, {
+    isActivated: true,
+  });
   res.status(httpStatus.OK).json({
-    message: "Successfully deactivated profile",
+    message: "Successfully activated profile",
   });
 };
 

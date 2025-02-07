@@ -4,16 +4,15 @@ import createAuthMiddleware from "@/middleware/auth";
 import * as controller from "./profile.controller";
 import multer from "multer";
 import { storageConfig } from "@/lib/config/storage";
-import {
-  createUserProfileSchema,
-  paramsProfileIdSchema,
-  profileActivationSchema,
-} from "./profile.schema";
+import { createUserProfileSchema, updateProfileSchema } from "./profile.schema";
 // import { createComplimentSchema } from "../compliments/compliment.schema";
 import { z } from "zod";
-import { handleUnderwork } from "@/shared/default.controller";
-import { ensureProfileExists } from "./profile.middleware";
+import {
+  ensureUserProfileExists,
+  stripUnmodifiableFields,
+} from "./profile.middleware";
 import { validateRequest } from "@/middleware/validate";
+import { ensureResourceExists } from "@/middleware/ensureItemExists";
 
 const upload = multer({ storage: storageConfig });
 const profilesRouter: Router = Router();
@@ -27,12 +26,6 @@ profilesRouter.post(
   controller.handleCreateProfile,
 );
 
-profilesRouter.post(
-  "/profiles/activate",
-  createAuthMiddleware("admin"),
-  handleUnderwork,
-);
-
 profilesRouter.get(
   "/profiles",
   validateRequest({
@@ -43,48 +36,43 @@ profilesRouter.get(
   controller.handleGetProfiles,
 );
 
+// Get user profile
 profilesRouter.get(
-  "/profiles/:profileId",
-  validateRequest({
-    params: paramsProfileIdSchema,
-  }),
-  ensureProfileExists,
+  "/users/:userId/profile",
+  createAuthMiddleware("admin", "user"),
+  ensureResourceExists("user"),
+  ensureUserProfileExists,
   controller.handleGetProfile,
 );
 
-// Get user profile
-profilesRouter.get(
-  "/users/:id/profile",
+profilesRouter.patch(
+  "/users/:userId/profile",
   createAuthMiddleware("admin", "user"),
-  handleUnderwork,
-);
-
-profilesRouter.patch(
-  "/profiles/:profileId",
-  createAuthMiddleware("admin"),
-  handleUnderwork,
-);
-
-profilesRouter.patch(
-  "/profiles/:profileId/activate",
+  ensureResourceExists("user"),
+  ensureUserProfileExists,
+  upload.single("imageFile"),
   validateRequest({
-    body: profileActivationSchema,
-    params: paramsProfileIdSchema,
+    body: updateProfileSchema,
   }),
-  ensureProfileExists,
-  controller.handleActivateProfile,
+  stripUnmodifiableFields,
+  controller.handleUpdateProfile,
 );
 
 profilesRouter.patch(
-  "/profiles/:profileId/deactivate",
-  createAuthMiddleware("admin"),
-  ensureProfileExists,
-  controller.handleDeactivateProfile,
+  "/users/:userId/profile/activate",
+  ensureResourceExists("user"),
+  ensureUserProfileExists,
+  validateRequest({
+    body: updateProfileSchema,
+  }),
+  controller.handleActivateProfile,
 );
 
 profilesRouter.delete(
   "/users/:userId/profile",
   createAuthMiddleware("admin"),
+  ensureResourceExists("user"),
+  ensureUserProfileExists,
   controller.handleDeleteProfile,
 );
 

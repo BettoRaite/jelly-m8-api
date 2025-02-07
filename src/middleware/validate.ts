@@ -15,7 +15,6 @@ export const validateRequest = (schemas: RequestValidationSchema) => {
     for (const k of keys) {
       const schema = schemas[k];
       if (!schema) continue; // Skip if schema is undefined
-
       const result = schema.safeParse(req[k]);
       if (!result.success) {
         // Collect validation errors
