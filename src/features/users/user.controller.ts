@@ -38,9 +38,9 @@ export const handleGetUser = async (req: Request, res: Response) => {
 };
 
 export const handleGetCurrentUser = async (req: Request, res: Response) => {
-  const id = req.payload?.userId as number;
+  const userId = req.payload?.userId as number;
   const user = await userService.getUserBy({
-    id,
+    id: userId,
   });
   res.status(httpStatus.OK).json({
     data: user,
@@ -52,22 +52,22 @@ export const handleInvalidateAccessKey = async (
     unknown,
     unknown,
     {
-      id: number;
+      userId: number;
     }
   >,
   res: Response,
 ) => {
-  const { id } = req.params;
+  const { userId } = req.params;
   // Making sure that user actually exists
   const user = await userService.getUserBy({
-    id: id as number,
+    id: userId as number,
   });
   if (!user) {
     return res.status(httpStatus.NOT_FOUND).json({
       message: "User with given id does not exist",
     });
   }
-  await userService.invalidateUserAccessSecret(id as number);
+  await userService.invalidateUserAccessSecret(userId as number);
   res.status(httpStatus.OK).json({
     message: "Successfully invalidated user access key",
   });
@@ -78,21 +78,21 @@ export const handleDeleteUser = async (
     unknown,
     unknown,
     {
-      id: number;
+      userId: number;
     }
   >,
   res: Response,
 ) => {
-  const id = req.params.id as number;
+  const userId = req.params.userId as number;
   const user = await userService.getUserBy({
-    id,
+    id: userId,
   });
   if (!user) {
     return res.status(httpStatus.NOT_FOUND).json({
       message: "User with given id does not exist",
     });
   }
-  await userService.deleteUser(id);
+  await userService.deleteUser(userId);
   res.status(httpStatus.OK).json({
     message: "Successfully deleted user",
   });

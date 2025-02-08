@@ -32,31 +32,23 @@ usersRouter.get(
 );
 // Get currently authenticated user
 usersRouter.get(
-  "/users/current",
+  "/auth",
   createAuthMiddleware("admin", "user"),
   controller.handleGetCurrentUser,
 );
 // Invalidate access token
 usersRouter.patch(
-  "/users/:id/access-secret/invalidate",
+  "/users/:userId/access-secret/invalidate",
   createAuthMiddleware("admin"),
-  validateRequest({
-    params: z.object({
-      id: z.coerce.number().positive(),
-    }),
-  }),
+  ensureResourceExists("user"),
   controller.handleInvalidateAccessKey,
 );
 
 // Detele user
 usersRouter.delete(
-  "/users/:id",
+  "/users/:userId",
   createAuthMiddleware("admin"),
-  validateRequest({
-    params: z.object({
-      id: z.coerce.number().positive(),
-    }),
-  }),
+  ensureResourceExists("user"),
   controller.handleDeleteUser,
 );
 

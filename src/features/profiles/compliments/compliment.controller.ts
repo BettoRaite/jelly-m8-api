@@ -29,7 +29,7 @@ export const handleCreateCompliment = async (
       });
     }
   }
-  console.log(req.payload);
+
   await complimentService.createCompliment({
     userId,
     profileId,
@@ -40,8 +40,11 @@ export const handleCreateCompliment = async (
   });
 };
 
-export const handleGetCompliments = async (_: Request, res: Response) => {
-  const items = await complimentService.getCompliments();
+export const handleGetCompliments = async (req: Request, res: Response) => {
+  const profileId = req.params["profileId"] as unknown as number;
+  const items = await complimentService.getCompliments({
+    profileId,
+  });
   res.status(httpStatus.OK).json({
     data: items,
   });

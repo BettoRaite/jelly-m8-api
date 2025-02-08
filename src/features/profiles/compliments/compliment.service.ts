@@ -6,8 +6,8 @@ import {
   type ComplimentSelect,
   UserProfilesTable,
 } from "@/database/schema";
-import type { AtLeastOne } from "@/lib/types/types";
-import { and, eq } from "drizzle-orm";
+import type { AtLeastOne, Pagination } from "@/lib/types/types";
+import { and, desc, eq, getTableColumns } from "drizzle-orm";
 import type { UpdateComplimentPayload } from "./compliment.schema";
 
 const createCompliment = async (payload: ComplimentInsert) => {
@@ -28,17 +28,28 @@ const getComplimentBy = async (queryOptions: AtLeastOne<ComplimentSelect>) => {
   ).at(0);
 };
 
-const getCompliments = async () => {
-  return await db
+export const getCompliments = async (
+  queryOptions: AtLeastOne<ComplimentSelect>,
+  { pageSize = 100 }: Pagination = {},
+) => {
+  const query = constructWhereQuery({
+    queryOptions,
+    table: ComplimentsTable,
+  });
+  const items = await db
     .select({
-      ...ComplimentsTable,
-      author: UserProfilesTable,
+      ...getTableColumns(ComplimentsTable),
+      author: getTableColumns(UserProfilesTable),
     })
     .from(ComplimentsTable)
+    .where(and(...query))
     .innerJoin(
       UserProfilesTable,
       eq(ComplimentsTable.userId, UserProfilesTable.userId),
-    );
+    )
+    .orderBy()
+    .limit(pageSize);
+  return items;
 };
 
 const updateCompliment = async (
@@ -59,20 +70,7 @@ const deleteCompliment = async (complimentId: number) => {
     .where(eq(ComplimentsTable.id, complimentId));
 };
 
-type ComplimentService = {
-  createCompliment: (payload: ComplimentInsert) => Promise<void>;
-  getComplimentBy: (
-    queryOptions: AtLeastOne<ComplimentSelect>,
-  ) => Promise<ComplimentSelect | undefined>;
-  getCompliments: () => Promise<ComplimentSelect[]>;
-  updateCompliment: (
-    complimentId: number,
-    payload: UpdateComplimentPayload,
-  ) => Promise<never[]>;
-  deleteCompliment: (complimentId: number) => Promise<never[]>;
-};
-
-const complimentService: ComplimentService = {
+const complimentService = {
   createCompliment,
   getComplimentBy,
   getCompliments,

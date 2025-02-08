@@ -74,3 +74,9 @@ export type SanitizeOptions = IFilterXSSOptions & {
 export type AtLeastOne<T> = {
   [K in keyof T]: Pick<T, K> & Partial<Omit<T, K>>;
 }[keyof T];
+
+export type Pagination = {
+  pageSize?: number; // or pageSize, resultsPerPage
+  pageStart?: number; // or pageNumber, startingIndex
+  sortOrder?: "desc" | "asc"; // or direction, sortDirection
+};
