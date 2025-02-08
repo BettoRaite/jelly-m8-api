@@ -14,7 +14,7 @@ export const updateComplimentSchema = z
   .partial()
   .refine(
     (data) => hasAtLeastOneField(data),
-    "Either first or second should be filled in.",
+    "At least one field is required.",
   );
 
 export type CreateComplimentPayload = z.infer<typeof createComplimentSchema>;

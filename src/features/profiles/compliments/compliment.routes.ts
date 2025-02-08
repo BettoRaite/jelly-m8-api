@@ -31,6 +31,12 @@ complimentRoutes.get(
   ensureResourceExists("profile"),
   controller.handleGetCompliments,
 );
+complimentRoutes.get(
+  "/profiles/:profileId/compliments/current",
+  createAuthMiddleware("admin", "user"),
+  ensureResourceExists("profile"),
+  controller.handleGetCompliment,
+);
 // Update a compliment
 // Only owner of the compliment or admin can edit it
 complimentRoutes.patch(

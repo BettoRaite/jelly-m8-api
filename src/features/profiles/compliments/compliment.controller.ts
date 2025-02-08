@@ -47,6 +47,18 @@ export const handleGetCompliments = async (_: Request, res: Response) => {
   });
 };
 
+export const handleGetCompliment = async (req: Request, res: Response) => {
+  const { userId } = req.payload as JwtPayload;
+
+  const compliment = await complimentService.getComplimentBy({
+    userId,
+  });
+  console.log(compliment);
+  res.status(httpStatus.OK).json({
+    data: compliment,
+  });
+};
+
 export const handleUpdateCompliment = async (
   req: TypedRequest<UpdateComplimentPayload, unknown, ParamsComplimentId>,
   res: Response,

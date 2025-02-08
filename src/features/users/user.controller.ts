@@ -27,6 +27,15 @@ export const handleGetUsers = async (_: Request, res: Response) => {
     data: users,
   });
 };
+export const handleGetUser = async (req: Request, res: Response) => {
+  const userId = req.params["userId"] as unknown as number;
+  const user = await userService.getUserBy({
+    id: userId,
+  });
+  res.status(httpStatus.OK).json({
+    data: user,
+  });
+};
 
 export const handleGetCurrentUser = async (req: Request, res: Response) => {
   const id = req.payload?.userId as number;

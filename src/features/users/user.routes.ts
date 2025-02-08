@@ -4,6 +4,7 @@ import createAuthMiddleware from "@/middleware/auth";
 import { validateRequest } from "@/middleware/validate";
 import { createUserSchema } from "./user.schema";
 import z from "zod";
+import { ensureResourceExists } from "@/middleware/ensureItemExists";
 
 const usersRouter: Router = Router();
 
@@ -20,6 +21,14 @@ usersRouter.get(
   "/users",
   createAuthMiddleware("admin"),
   controller.handleGetUsers,
+);
+//  Get user
+usersRouter.get(
+  "/users/:userId",
+  createAuthMiddleware("admin"),
+  ensureResourceExists("user", {
+    returnResourceResponse: true,
+  }),
 );
 // Get currently authenticated user
 usersRouter.get(

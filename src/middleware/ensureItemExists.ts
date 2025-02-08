@@ -1,6 +1,6 @@
 import type { NextFunction, Response, Request } from "express";
 import httpStatus from "http-status";
-import { z } from "zod";
+import { OK, z } from "zod";
 import userService from "@/features/users/user.service";
 import profileService from "@/features/profiles/profile.service";
 import {
@@ -37,7 +37,14 @@ type ResourceType = keyof typeof RESOURCE_CONFIG;
  * Middleware to ensure that a resource exists based on the resource type.
  * @param resource - The type of resource to check (user, profile, or compliment).
  */
-export const ensureResourceExists = (resource: ResourceType) => {
+export const ensureResourceExists = (
+  resource: ResourceType,
+  {
+    returnResourceResponse = false,
+  }: {
+    returnResourceResponse?: boolean;
+  } = {},
+) => {
   const config = RESOURCE_CONFIG[resource];
 
   return async (req: Request, res: Response, next: NextFunction) => {
@@ -61,6 +68,11 @@ export const ensureResourceExists = (resource: ResourceType) => {
       return res.status(httpStatus.NOT_FOUND).json({
         status: "error",
         message: `${resource.charAt(0).toUpperCase() + resource.slice(1)} not found`,
+      });
+    }
+    if (returnResourceResponse) {
+      return res.status(httpStatus.OK).json({
+        data: resourceExists,
       });
     }
     next();
