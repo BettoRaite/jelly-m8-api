@@ -17,16 +17,16 @@ export const handleCreateProfile = async (
     CreateUserProfilePayload,
     unknown,
     {
-      id: number;
+      userId: number;
     }
   >,
   res: Response,
 ) => {
   const payload = req.body as CreateUserProfilePayload;
-  const userId = req.params.userId;
+  const userId = req.params.userId as number;
 
   const exists = await profileService.getProfileBy({
-    userId: userId,
+    userId,
   });
   if (exists) {
     return res.status(httpStatus.CONFLICT).json({
