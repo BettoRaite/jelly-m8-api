@@ -100,7 +100,7 @@ export const createLinkToLocalImageFile = (
   imageName: string,
   { isLocal = false } = {},
 ) => {
-  return `${config.server.url}/api/v1/image/${imageName}/${isLocal ? "/local" : ""}`;
+  return `${config.server.url}/api/v1/image/${imageName}${isLocal ? "/local" : ""}`;
 };
 
 const storageService = {

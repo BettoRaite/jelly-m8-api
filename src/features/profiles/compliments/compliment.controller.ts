@@ -35,6 +35,7 @@ export const handleCreateCompliment = async (
     userId,
     profileId,
     ...payload,
+    isAdmin: userRole === "admin",
   });
   res.status(httpStatus.CREATED).json({
     message: "Successfully created compliment",

@@ -7,6 +7,7 @@ import {
   boolean,
   unique,
   timestamp,
+  date,
 } from "drizzle-orm/pg-core";
 
 // Users Table with enum
@@ -63,6 +64,8 @@ export const ComplimentsTable = pgTable(
       .references(() => UserProfilesTable.id, {
         onDelete: "cascade",
       }),
+    createdAt: date().defaultNow(),
+    isAdmin: boolean("is_admin").default(false),
   },
   (t) => [
     {

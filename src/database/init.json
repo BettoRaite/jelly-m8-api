@@ -1,0 +1,65 @@
+[
+  {
+    "username": "Vika",
+    "profile": {
+      "displayName": "Викуся :3",
+      "gender": "female",
+      "biography": "Викуся",
+      "imageName": "girly.jpeg"
+    }
+  },
+  {
+    "username": "sonya",
+    "profile": {
+      "displayName": "Соня",
+      "gender": "female",
+      "biography": "Соня",
+      "imageName": "9fff142e-f71c-47c5-b143-61d7c4030840.jpeg"
+    }
+  },
+  {
+    "username": "eva",
+    "profile": {
+      "displayName": "Ева",
+      "gender": "female",
+      "biography": "пацаны как костер, можно развести и обоссать",
+      "imageName": "photo_2025-02-10_12-45-51.jpg"
+    }
+  },
+  {
+    "username": "Ulya",
+    "profile": {
+      "displayName": "Юля",
+      "gender": "female",
+      "biography": "Юляяя",
+      "imageName": "photo_2024-06-04_11-54-40.jpg"
+    }
+  },
+  {
+    "username": "Alsy",
+    "profile": {
+      "displayName": "Алсу",
+      "gender": "female",
+      "biography": "Алсу",
+      "imageName": "photo_2025-02-10_12-40-49.jpg"
+    }
+  },
+  {
+    "username": "Nastya",
+    "profile": {
+      "displayName": "Настя",
+      "gender": "female",
+      "biography": "Настя",
+      "imageName": "photo_2025-02-10_12-40-00.jpg"
+    }
+  },
+  {
+    "username": "Vera",
+    "profile": {
+      "displayName": "Вера",
+      "gender": "female",
+      "biography": "Вера",
+      "imageName": "photo_2024-02-13_00-35-54.jpg"
+    }
+  }
+]

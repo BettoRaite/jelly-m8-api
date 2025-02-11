@@ -2,6 +2,8 @@ import config from "./lib/config/config";
 import userService from "./features/users/user.service";
 import fs from "node:fs";
 import path from "node:path";
+import "./seedDB";
+import { seedDB } from "./seedDB";
 
 const createAdmin = async () => {
   try {
@@ -29,8 +31,9 @@ const createUploadFolder = () => {
 };
 
 if (config.node_env === "development") {
-  (async () => {
+  (() => {
     createAdmin();
     createUploadFolder();
+    seedDB();
   })();
 }

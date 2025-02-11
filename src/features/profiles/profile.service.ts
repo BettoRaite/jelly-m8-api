@@ -16,7 +16,7 @@ import config from "@/lib/config/config";
 export const createProfile = async (
   userId: number,
   payload: CreateUserProfilePayload,
-  imageUrl: string,
+  imageUrl = "",
 ) => {
   const activationSecret =
     config.node_env === "development" ? "unlock" : getRandSecret();
@@ -29,12 +29,16 @@ export const createProfile = async (
       },
     );
   }
-  await db.insert(UserProfilesTable).values({
-    ...payload,
-    userId,
-    activationSecret,
-    profileImageUrl,
-  });
+  const item = await db
+    .insert(UserProfilesTable)
+    .values({
+      ...payload,
+      userId,
+      activationSecret,
+      profileImageUrl,
+    })
+    .returning();
+  return item.at(0);
 };
 
 export const getProfiles = async (queryOptions: Partial<UserProfileSelect>) => {
@@ -135,6 +139,7 @@ export const deleteProfile = async (
 };
 
 const profileService = {
+  createProfile,
   getProfileBy,
   deleteProfile,
   updateProfile,
