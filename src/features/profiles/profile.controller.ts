@@ -10,6 +10,7 @@ import type { TypedRequest } from "@/lib/types/types";
 import * as profileService from "./profile.service";
 import { createLinkToLocalImageFile } from "../storage/storage.service";
 import type { UserGender, UserProfileInsert } from "@/database/schema";
+import { formatObjectLikeQuery } from "@/database/helpers/constructWhereQuery";
 
 export const handleCreateProfile = async (
   req: TypedRequest<
@@ -47,8 +48,15 @@ export const handleCreateProfile = async (
 // Will need to join the compliments with the
 export const handleGetProfiles = async (req: Request, res: Response) => {
   const profiles = await profileService.getProfiles({
-    ...req.query,
+    queryOptions: formatObjectLikeQuery(
+      req.query as Record<string, string | number>,
+      "displayName",
+    ),
+    operators: {
+      displayName: "ilike",
+    },
   });
+
   res.status(httpStatus.OK).json({
     data: profiles,
   });

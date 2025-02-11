@@ -33,6 +33,7 @@ profilesRouter.get(
     query: z
       .object({
         gender: z.enum(["male", "female"]),
+        displayName: z.string(),
       })
       .partial(),
   }),

@@ -1,18 +1,20 @@
 import type { QueryOperators } from "@/lib/types/types";
-import type { Table, SQLWrapper } from "drizzle-orm";
+import { type Table, type SQLWrapper, and, SQL } from "drizzle-orm";
 import { OPERATORS } from "@/lib/constants";
+
+type Options<T> = {
+  table: Table;
+  queryOptions?: Partial<T>;
+  strict?: boolean;
+  operators?: QueryOperators<T>;
+};
 
 export const constructWhereQuery = <T extends Record<string, unknown>>({
   table,
   queryOptions = {},
   strict = false,
   operators = {},
-}: {
-  table: Table;
-  queryOptions?: Partial<T>;
-  strict?: boolean;
-  operators?: QueryOperators<T>;
-}): SQLWrapper[] => {
+}: Options<T>): SQLWrapper[] => {
   const keys = Object.keys(queryOptions);
 
   // Throw an error if no query options are provided and strict mode is enabled

@@ -12,6 +12,7 @@ import httpStatus from "http-status";
 import storageService from "../storage/storage.service";
 import { constructWhereQuery } from "@/database/helpers/constructWhereQuery";
 import config from "@/lib/config/config";
+import type { QueryConfig } from "@/lib/types/types";
 
 export const createProfile = async (
   userId: number,
@@ -41,21 +42,20 @@ export const createProfile = async (
   return item.at(0);
 };
 
-export const getProfiles = async (queryOptions: Partial<UserProfileSelect>) => {
-  const whereQuery = [];
-  for (const k of Object.keys(queryOptions)) {
-    whereQuery.push(
-      eq(
-        UserProfilesTable[k as keyof UserProfileSelect],
-        queryOptions[k as keyof UserProfileSelect] as number | string,
-      ),
-    );
-  }
+export const getProfiles = async (
+  queryConfig: QueryConfig<UserProfileSelect>,
+) => {
+  const whereQuery = constructWhereQuery({
+    table: UserProfilesTable,
+    ...queryConfig,
+  });
+
   return await db
     .select()
     .from(UserProfilesTable)
     .where(and(...whereQuery))
-    .orderBy(UserProfilesTable.id);
+    .orderBy(UserProfilesTable.id)
+    .limit(queryConfig.pagination?.pageSize ?? 100);
 };
 
 export const getProfileBy = async (

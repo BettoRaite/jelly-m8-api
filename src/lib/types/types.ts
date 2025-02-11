@@ -84,7 +84,7 @@ export type Pagination = {
 };
 export type QueryOperatorNames = keyof typeof OPERATORS;
 export type QueryOperators<T> = Partial<Record<keyof T, QueryOperatorNames>>;
-export type QueryOptions<T> = {
+export type QueryConfig<T> = {
   queryOptions?: Partial<T>;
   pagination?: Pagination;
   operators?: QueryOperators<T>;
