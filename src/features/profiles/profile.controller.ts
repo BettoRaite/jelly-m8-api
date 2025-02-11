@@ -23,7 +23,7 @@ export const handleCreateProfile = async (
   res: Response,
 ) => {
   const payload = req.body as CreateUserProfilePayload;
-  const userId = req.params.id as number;
+  const userId = req.params.userId;
 
   const exists = await profileService.getProfileBy({
     userId: userId,

@@ -1,5 +1,5 @@
 import type { Request, Response } from "express";
-import complimentService from "./compliment.service";
+import complimentService from "@/shared/services/compliment.service";
 import httpStatus from "http-status";
 import type { TypedRequest } from "@/lib/types/types";
 import type {
@@ -9,6 +9,7 @@ import type {
 } from "./compliment.schema";
 import type { ParamsProfileId } from "../profile.schema";
 import type { JwtPayload } from "jsonwebtoken";
+import type { ComplimentInsert } from "@/database/schema";
 
 export const handleCreateCompliment = async (
   req: TypedRequest<CreateComplimentPayload, unknown, ParamsProfileId>,
@@ -74,9 +75,10 @@ export const handleUpdateCompliment = async (
   const payload = req.body as UpdateComplimentPayload;
   const { complimentId } = req.params as ParamsComplimentId;
 
-  await complimentService.updateCompliment(complimentId, {
-    ...payload,
-  });
+  await complimentService.updateCompliment(
+    complimentId,
+    payload as ComplimentInsert,
+  );
   res.status(httpStatus.OK).json({
     message: "Successfully updated compliment",
   });

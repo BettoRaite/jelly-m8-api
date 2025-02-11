@@ -1,6 +1,6 @@
 import type { NextFunction, Response, Request } from "express";
 import httpStatus from "http-status";
-import { OK, z } from "zod";
+import { z } from "zod";
 import userService from "@/features/users/user.service";
 import profileService from "@/features/profiles/profile.service";
 import {
@@ -8,7 +8,7 @@ import {
   paramsProfileIdSchema,
 } from "@/features/profiles/profile.schema";
 import { paramsComplimentIdSchema } from "@/features/profiles/compliments/compliment.schema";
-import complimentService from "@/features/profiles/compliments/compliment.service";
+import complimentService from "@/shared/services/compliment.service";
 
 // Configuration object for different resources
 const RESOURCE_CONFIG = {

@@ -1,7 +1,7 @@
-import type { NextFunction, Request, Response } from "express";
 import httpStatus from "http-status";
 import type { ZodSchema } from "zod";
 import type { RequireAtLeastOne } from "@/lib/types/types";
+import type { NextFunction, Request, Response } from "express";
 type RequestValidationSchema = RequireAtLeastOne<
   Record<"body" | "query" | "params", ZodSchema>
 >;

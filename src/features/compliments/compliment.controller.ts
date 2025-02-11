@@ -1,5 +1,5 @@
 import httpStatus from "http-status";
-import complimentService from "../profiles/compliments/compliment.service";
+import complimentService from "@/shared/services/compliment.service";
 import type { Request, Response } from "express";
 import { formatObjectLikeQuery } from "@/database/helpers/constructWhereQuery";
 

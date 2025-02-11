@@ -6,9 +6,9 @@ import {
   type ComplimentSelect,
   UserProfilesTable,
 } from "@/database/schema";
-import type { AtLeastOne, QueryOptions } from "@/lib/types/types";
+import type { AtLeastOne, QueryConfig } from "@/lib/types/types";
 import { and, eq, getTableColumns } from "drizzle-orm";
-import type { UpdateComplimentPayload } from "./compliment.schema";
+import type { UpdateComplimentPayload } from "@/features/profiles/compliments/compliment.schema";
 
 const createCompliment = async (payload: ComplimentInsert) => {
   await db.insert(ComplimentsTable).values(payload).returning();
@@ -32,7 +32,7 @@ export const getCompliments = async ({
   queryOptions = {},
   operators = {},
   pagination: { pageSize = 100 } = {},
-}: QueryOptions<ComplimentSelect>) => {
+}: QueryConfig<ComplimentSelect>) => {
   const query = constructWhereQuery({
     queryOptions,
     table: ComplimentsTable,
@@ -56,7 +56,7 @@ export const getCompliments = async ({
 
 const updateCompliment = async (
   complimentId: number,
-  payload: UpdateComplimentPayload,
+  payload: Partial<ComplimentInsert>,
 ) => {
   return await db
     .update(ComplimentsTable)

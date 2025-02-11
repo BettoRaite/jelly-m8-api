@@ -1,4 +1,4 @@
-import express, { type Request, type Express, type Response } from "express";
+import express, { type Express } from "express";
 import cors from "cors";
 import helmet from "helmet";
 import compression from "compression";
@@ -10,8 +10,6 @@ import config from "./lib/config/config";
 import authLimiter from "./middleware/authLimiter";
 import { xssMiddleware } from "./middleware/xssMiddleware";
 import corsConfig from "./lib/config/cors";
-import createAuthMiddleware from "./middleware/auth";
-import httpStatus from "http-status";
 import path from "node:path";
 
 const app: Express = express();
@@ -35,16 +33,6 @@ if (config.node_env === "production") {
 }
 
 app.use("/api/v1", router);
-
-app.get(
-  "/sacret-place",
-  createAuthMiddleware("admin"),
-  (_: Request, res: Response) => {
-    res.status(httpStatus.OK).json({
-      message: "Hello there!",
-    });
-  },
-);
 
 app.use(errorHandler);
 

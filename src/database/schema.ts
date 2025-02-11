@@ -66,6 +66,7 @@ export const ComplimentsTable = pgTable(
       }),
     createdAt: date().defaultNow(),
     isAdmin: boolean("is_admin").default(false),
+    likes: integer().default(0).notNull(),
   },
   (t) => [
     {
@@ -75,17 +76,16 @@ export const ComplimentsTable = pgTable(
 );
 
 // Likes Table
-export const ComplimentLikesTable = pgTable(
+export const LikesTable = pgTable(
   "LikesTable",
   {
     id: serial("id").primaryKey(),
     userId: integer("user_id")
       .notNull()
       .references(() => UsersTable.id, { onDelete: "cascade" }), // User who liked,
-    complimentId: integer("compliment_id").references(
-      () => ComplimentsTable.id,
-      { onDelete: "cascade" },
-    ), // Liked compliment (optional)
+    complimentId: integer("compliment_id")
+      .references(() => ComplimentsTable.id, { onDelete: "cascade" })
+      .notNull(), // Liked compliment (optional)
     createdAt: timestamp("created_at").defaultNow().notNull(), // Timestamp of the like
   },
   (t) => ({
@@ -112,8 +112,8 @@ export type ComplimentSelect = typeof ComplimentsTable.$inferSelect;
 export type QuestionInsert = typeof QuestionsTable.$inferInsert;
 export type QuestionSelect = typeof QuestionsTable.$inferSelect;
 
-export type ComplimentLikeInsert = typeof ComplimentLikesTable.$inferInsert;
-export type ComplimentLikeSelect = typeof ComplimentLikesTable.$inferSelect;
+export type LikeInsert = typeof LikesTable.$inferInsert;
+export type LikeSelect = typeof LikesTable.$inferSelect;
 
 export type UserRole = UserSelect["userRole"];
 export type UserGender = UserProfileSelect["gender"];

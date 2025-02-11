@@ -5,7 +5,7 @@ import {
 } from "./compliment.schema";
 import type { NextFunction, Response } from "express";
 import type { JwtPayload } from "jsonwebtoken";
-import complimentService from "./compliment.service";
+import complimentService from "@/shared/services/compliment.service";
 import httpStatus from "http-status";
 
 export const isComplimentOwner = async (
