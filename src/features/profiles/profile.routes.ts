@@ -19,8 +19,9 @@ const profilesRouter: Router = Router();
 
 // Create user profile
 profilesRouter.post(
-  "/users/:id/profile",
+  "/users/:userId/profile",
   createAuthMiddleware("admin", "user"),
+  ensureResourceExists("user"),
   upload.single("imageFile"),
   validateRequest({ body: createUserProfileSchema }),
   controller.handleCreateProfile,

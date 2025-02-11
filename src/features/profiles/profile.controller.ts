@@ -2,18 +2,14 @@ import type { Request, Response } from "express";
 import httpStatus from "http-status";
 import type {
   CreateUserProfilePayload,
-  ParamsProfileId,
   ProfileActivationPayload,
-  UpdateProfilePayload,
   // profileActivationSchema,
 } from "./profile.schema";
 import type { TypedRequest } from "@/lib/types/types";
 // import type { JwtPayload } from "jsonwebtoken";
 import * as profileService from "./profile.service";
-import * as userService from "../users/user.service";
 import { createLinkToLocalImageFile } from "../storage/storage.service";
 import type { UserGender, UserProfileInsert } from "@/database/schema";
-import { profile } from "winston";
 
 export const handleCreateProfile = async (
   req: TypedRequest<
@@ -28,20 +24,9 @@ export const handleCreateProfile = async (
   const payload = req.body as CreateUserProfilePayload;
   const userId = req.params.id as number;
 
-  const storedUser = await userService.getUserBy({
-    id: userId,
-  });
-
-  if (!storedUser) {
-    return res.status(httpStatus.NOT_FOUND).json({
-      message: "user with given id does not exist",
-    });
-  }
-
   const exists = await profileService.getProfileBy({
-    id: userId,
+    userId: userId,
   });
-
   if (exists) {
     return res.status(httpStatus.CONFLICT).json({
       message: "Profile with given id already exists",
