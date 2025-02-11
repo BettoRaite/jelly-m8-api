@@ -19,31 +19,34 @@ export const handleCreateCompliment = async (
   const { userId, userRole } = req.payload as JwtPayload;
 
   if (userRole !== "admin") {
-    const hasComplimented = await complimentService.getComplimentBy({
-      userId,
-      profileId,
+    const items = await complimentService.getCompliments({
+      queryOptions: {
+        userId,
+        profileId,
+      },
     });
-    if (hasComplimented) {
+    if (items[0]) {
       return res.status(httpStatus.CONFLICT).json({
         message: "Compliment for given profile already exists",
       });
     }
   }
-
   await complimentService.createCompliment({
     userId,
     profileId,
     ...payload,
   });
   res.status(httpStatus.CREATED).json({
-    message: "Successfully create compliment",
+    message: "Successfully created compliment",
   });
 };
 
 export const handleGetCompliments = async (req: Request, res: Response) => {
   const profileId = req.params["profileId"] as unknown as number;
   const items = await complimentService.getCompliments({
-    profileId,
+    queryOptions: {
+      profileId,
+    },
   });
   res.status(httpStatus.OK).json({
     data: items,
@@ -51,14 +54,15 @@ export const handleGetCompliments = async (req: Request, res: Response) => {
 };
 
 export const handleGetCompliment = async (req: Request, res: Response) => {
-  const { userId } = req.payload as JwtPayload;
+  const complimentId = req.params["complimentId"] as unknown as number;
 
-  const compliment = await complimentService.getComplimentBy({
-    userId,
+  const items = await complimentService.getCompliments({
+    queryOptions: {
+      id: complimentId,
+    },
   });
-  console.log(compliment);
   res.status(httpStatus.OK).json({
-    data: compliment,
+    data: items[0],
   });
 };
 

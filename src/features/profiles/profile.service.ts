@@ -20,11 +20,20 @@ export const createProfile = async (
 ) => {
   const activationSecret =
     config.node_env === "development" ? "unlock" : getRandSecret();
+  let profileImageUrl = storageService.createLinkToLocalImageFile(imageUrl);
+  if (config.node_env === "development" && payload.imageName) {
+    profileImageUrl = storageService.createLinkToLocalImageFile(
+      payload.imageName,
+      {
+        isLocal: true,
+      },
+    );
+  }
   await db.insert(UserProfilesTable).values({
     ...payload,
     userId,
     activationSecret,
-    profileImageUrl: storageService.createLinkToLocalImageFile(imageUrl),
+    profileImageUrl,
   });
 };
 

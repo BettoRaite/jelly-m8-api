@@ -6,12 +6,12 @@ import {
   type ComplimentSelect,
   UserProfilesTable,
 } from "@/database/schema";
-import type { AtLeastOne, Pagination } from "@/lib/types/types";
-import { and, desc, eq, getTableColumns } from "drizzle-orm";
+import type { AtLeastOne, QueryOptions } from "@/lib/types/types";
+import { and, eq, getTableColumns } from "drizzle-orm";
 import type { UpdateComplimentPayload } from "./compliment.schema";
 
 const createCompliment = async (payload: ComplimentInsert) => {
-  await db.insert(ComplimentsTable).values(payload);
+  await db.insert(ComplimentsTable).values(payload).returning();
 };
 
 const getComplimentBy = async (queryOptions: AtLeastOne<ComplimentSelect>) => {
@@ -28,13 +28,15 @@ const getComplimentBy = async (queryOptions: AtLeastOne<ComplimentSelect>) => {
   ).at(0);
 };
 
-export const getCompliments = async (
-  queryOptions: AtLeastOne<ComplimentSelect>,
-  { pageSize = 100 }: Pagination = {},
-) => {
+export const getCompliments = async ({
+  queryOptions = {},
+  operators = {},
+  pagination: { pageSize = 100 } = {},
+}: QueryOptions<ComplimentSelect>) => {
   const query = constructWhereQuery({
     queryOptions,
     table: ComplimentsTable,
+    operators,
   });
   const items = await db
     .select({

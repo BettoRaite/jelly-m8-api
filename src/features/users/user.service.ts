@@ -13,9 +13,13 @@ export const createUser = async (payload: CreateUserPayload) => {
   if (!payload.accessSecret) {
     payload.accessSecret = getRandSecret();
   }
-  await db.insert(UsersTable).values({
-    ...(payload as UserInsert),
-  });
+  const result = await db
+    .insert(UsersTable)
+    .values({
+      ...(payload as UserInsert),
+    })
+    .returning();
+  return result.at(0);
 };
 
 export const invalidateUserAccessSecret = async (id: number) => {

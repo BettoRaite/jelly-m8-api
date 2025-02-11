@@ -12,11 +12,11 @@ import {
   isComplimentOwner,
 } from "./compliment.middleware";
 
-const complimentRoutes: Router = Router();
+const profileComplimentsRouter: Router = Router();
 
 // Create a compliment for a profile
 // Only authenticated users can create compliments
-complimentRoutes.post(
+profileComplimentsRouter.post(
   "/profiles/:profileId/compliments",
   createAuthMiddleware("admin", "user"),
   ensureResourceExists("profile"),
@@ -26,20 +26,21 @@ complimentRoutes.post(
   controller.handleCreateCompliment,
 );
 // Get all compliments associated with a profile
-complimentRoutes.get(
+profileComplimentsRouter.get(
   "/profiles/:profileId/compliments",
   ensureResourceExists("profile"),
   controller.handleGetCompliments,
 );
-complimentRoutes.get(
-  "/profiles/:profileId/compliments/current",
+profileComplimentsRouter.get(
+  "/profiles/:profileId/compliments/:complimentId",
   createAuthMiddleware("admin", "user"),
   ensureResourceExists("profile"),
+  ensureResourceExists("compliment"),
   controller.handleGetCompliment,
 );
 // Update a compliment
 // Only owner of the compliment or admin can edit it
-complimentRoutes.patch(
+profileComplimentsRouter.patch(
   "/profiles/:profileId/compliments/:complimentId",
   createAuthMiddleware("admin", "user"),
   ensureResourceExists("profile"),
@@ -52,7 +53,7 @@ complimentRoutes.patch(
 );
 // Delete a compliment
 // Only owner of the compliment or admin can delete it
-complimentRoutes.delete(
+profileComplimentsRouter.delete(
   "/profiles/:profileId/compliments/:complimentId",
   createAuthMiddleware("admin", "user"),
   ensureResourceExists("profile"),
@@ -61,4 +62,4 @@ complimentRoutes.delete(
   controller.handleDeleteCompliment,
 );
 
-export default complimentRoutes;
+export default profileComplimentsRouter;

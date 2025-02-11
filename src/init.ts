@@ -27,6 +27,7 @@ const createUploadFolder = () => {
     console.log(`Directory '${dirPath}' already exists.`);
   }
 };
+
 if (config.node_env === "development") {
   (async () => {
     createAdmin();

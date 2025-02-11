@@ -1,14 +1,13 @@
 import z from "zod";
-import type { UserProfileInsert } from "@/database/schema";
+// import type { UserProfileInsert } from "@/database/schema";
 import { hasAtLeastOneField } from "@/lib/utils/object";
 
-export const createUserProfileSchema: z.ZodType<
-  Omit<UserProfileInsert, "profileImageUrl" | "activationSecret" | "userId">
-> = z
+export const createUserProfileSchema = z
   .object({
     displayName: z.string().trim().min(3),
     biography: z.string().trim().min(3),
     gender: z.enum(["male", "female"]),
+    imageName: z.string().optional(),
   })
   .strict();
 

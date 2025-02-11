@@ -1,6 +1,8 @@
 import type { NextFunction, Request, Response } from "express";
 import type { DeepPartial } from "utility-types";
 import type { IFilterXSSOptions } from "xss";
+import { OPERATORS } from "../constants";
+import { Operators } from "drizzle-orm";
 // See this for the following types
 // https://stackoverflow.com/questions/34508081/how-to-add-typescript-definitions-to-express-req-res
 // https://stackoverflow.com/questions/61132262/typescript-deep-partial
@@ -79,4 +81,11 @@ export type Pagination = {
   pageSize?: number; // or pageSize, resultsPerPage
   pageStart?: number; // or pageNumber, startingIndex
   sortOrder?: "desc" | "asc"; // or direction, sortDirection
+};
+export type QueryOperatorNames = keyof typeof OPERATORS;
+export type QueryOperators<T> = Partial<Record<keyof T, QueryOperatorNames>>;
+export type QueryOptions<T> = {
+  queryOptions?: Partial<T>;
+  pagination?: Pagination;
+  operators?: QueryOperators<T>;
 };
