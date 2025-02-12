@@ -9,7 +9,7 @@ export const handleCreateLike = async (req: Request, res: Response) => {
     complimentId: req.params["complimentId"] as unknown as number,
     userId,
   });
-  res.status(httpStatus.CREATED);
+  res.status(httpStatus.CREATED).json({ message: "Like created successfully" });
 };
 export const handleGetLike = async (req: Request, res: Response) => {
   const { userId } = req.payload as JwtPayload;
@@ -27,5 +27,5 @@ export const handleDeleteLike = async (req: Request, res: Response) => {
     complimentId: req.params["complimentId"] as unknown as number,
     userId,
   });
-  res.status(httpStatus.OK);
+  res.status(httpStatus.OK).json({ message: "Like deleted successfully" });
 };

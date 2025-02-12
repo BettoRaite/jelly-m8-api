@@ -7,8 +7,7 @@ import {
   UserProfilesTable,
 } from "@/database/schema";
 import type { AtLeastOne, QueryConfig } from "@/lib/types/types";
-import { and, eq, getTableColumns } from "drizzle-orm";
-import type { UpdateComplimentPayload } from "@/features/profiles/compliments/compliment.schema";
+import { and, desc, eq, getTableColumns } from "drizzle-orm";
 
 const createCompliment = async (payload: ComplimentInsert) => {
   await db.insert(ComplimentsTable).values(payload).returning();
@@ -49,7 +48,7 @@ export const getCompliments = async ({
       UserProfilesTable,
       eq(ComplimentsTable.userId, UserProfilesTable.userId),
     )
-    .orderBy()
+    .orderBy(desc(ComplimentsTable.likes))
     .limit(pageSize);
   return items;
 };

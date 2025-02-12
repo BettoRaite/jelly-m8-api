@@ -26,10 +26,13 @@ const deleteLike = async (payload: LikeInsert) => {
   if (!compliment) {
     throw new TypeError(`Compliment does not exist ${payload}`);
   }
+  if (compliment.likes === 0) {
+    return;
+  }
   await complimentService.updateCompliment(compliment.id, {
     likes: compliment.likes - 1,
   });
-  await db.delete(LikesTable).where(eq(LikesTable.userId, compliment.userId));
+  await db.delete(LikesTable).where(eq(LikesTable.userId, payload.userId));
 };
 const getLike = async (query: LikeInsert) => {
   const [like] = await db
@@ -40,7 +43,8 @@ const getLike = async (query: LikeInsert) => {
         eq(LikesTable.complimentId, query.complimentId),
         eq(LikesTable.userId, query.userId),
       ),
-    );
+    )
+    .limit(1);
   return like;
 };
 
