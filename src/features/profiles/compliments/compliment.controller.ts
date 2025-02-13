@@ -1,7 +1,7 @@
 import type { Request, Response } from "express";
 import complimentService from "@/shared/services/compliment.service";
 import httpStatus from "http-status";
-import type { TypedRequest } from "@/lib/types/types";
+import type { QuerySort, TypedRequest } from "@/lib/types/types";
 import type {
   CreateComplimentPayload,
   ParamsComplimentId,
@@ -9,7 +9,7 @@ import type {
 } from "./compliment.schema";
 import type { ParamsProfileId } from "../profile.schema";
 import type { JwtPayload } from "jsonwebtoken";
-import type { ComplimentInsert } from "@/database/schema";
+import type { ComplimentInsert, ComplimentSelect } from "@/database/schema";
 
 export const handleCreateCompliment = async (
   req: TypedRequest<CreateComplimentPayload, unknown, ParamsProfileId>,
@@ -45,10 +45,13 @@ export const handleCreateCompliment = async (
 
 export const handleGetCompliments = async (req: Request, res: Response) => {
   const profileId = req.params["profileId"] as unknown as number;
+
   const items = await complimentService.getCompliments({
     queryOptions: {
       profileId,
+      ...req.query,
     },
+    sorting: req.query as QuerySort<unknown>,
   });
   res.status(httpStatus.OK).json({
     data: items,

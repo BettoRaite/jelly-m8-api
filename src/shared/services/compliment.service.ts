@@ -1,4 +1,5 @@
 import db from "@/database";
+import { constructSortQuery } from "@/database/helpers/constructSortQuery";
 import { constructWhereQuery } from "@/database/helpers/constructWhereQuery";
 import {
   type ComplimentInsert,
@@ -31,11 +32,16 @@ export const getCompliments = async ({
   queryOptions = {},
   operators = {},
   pagination: { pageSize = 100 } = {},
+  sorting = {},
 }: QueryConfig<ComplimentSelect>) => {
   const query = constructWhereQuery({
     queryOptions,
     table: ComplimentsTable,
     operators,
+  });
+  const sort = constructSortQuery({
+    table: ComplimentsTable,
+    ...sorting,
   });
   const items = await db
     .select({
@@ -48,7 +54,7 @@ export const getCompliments = async ({
       UserProfilesTable,
       eq(ComplimentsTable.userId, UserProfilesTable.userId),
     )
-    .orderBy(desc(ComplimentsTable.likes), asc(ComplimentsTable.createdAt))
+    .orderBy(...sort)
     .limit(pageSize);
   return items;
 };

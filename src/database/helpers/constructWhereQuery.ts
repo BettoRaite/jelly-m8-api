@@ -30,6 +30,7 @@ export const constructWhereQuery = <T extends Record<string, unknown>>({
     if (!value || !tableCols[key as keyof typeof tableCols]) {
       continue;
     }
+    console.log(value);
     if (!OPERATORS[operator]) {
       // Validate that the operator exists in the OPERATORS map
       throw new Error(`Invalid operator: ${operator}`);

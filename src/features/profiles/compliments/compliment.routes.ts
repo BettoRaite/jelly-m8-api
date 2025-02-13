@@ -12,6 +12,8 @@ import {
   isComplimentOwner,
 } from "./compliment.middleware";
 import { z } from "zod";
+import { createSortValidation } from "@/lib/utils/schema";
+import type { ComplimentSelect } from "@/database/schema";
 
 const profileComplimentsRouter: Router = Router();
 
@@ -33,9 +35,9 @@ profileComplimentsRouter.get(
   validateRequest({
     query: z
       .object({
-        userId: z.coerce.number(),
-        asc: z.enum(["createdAt"]),
-        desc: z.enum(["createdAt"]),
+        userId: z.coerce.number().positive(),
+        asc: createSortValidation<ComplimentSelect>("createdAt"),
+        desc: createSortValidation<ComplimentSelect>("createdAt"),
       })
       .partial(),
   }),
