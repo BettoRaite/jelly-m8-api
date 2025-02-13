@@ -5,6 +5,17 @@ import httpStatus from "http-status";
 
 export const handleCreateLike = async (req: Request, res: Response) => {
   const { userId } = req.payload as JwtPayload;
+  const complimentId = req.params["complimentId"] as unknown as number;
+  const item = await likeService.getLike({
+    complimentId,
+    userId,
+  });
+
+  if (item) {
+    return res.status(httpStatus.CONFLICT).json({
+      message: "Can't compliment same profile more than one time.",
+    });
+  }
   await likeService.createLike({
     complimentId: req.params["complimentId"] as unknown as number,
     userId,
@@ -13,8 +24,9 @@ export const handleCreateLike = async (req: Request, res: Response) => {
 };
 export const handleGetLike = async (req: Request, res: Response) => {
   const { userId } = req.payload as JwtPayload;
+  const complimentId = req.params["complimentId"] as unknown as number;
   const item = await likeService.getLike({
-    complimentId: req.params["complimentId"] as unknown as number,
+    complimentId,
     userId,
   });
   res.status(httpStatus.OK).json({

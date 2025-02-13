@@ -18,6 +18,15 @@
     }
   },
   {
+    "username": "admin",
+    "profile": {
+      "displayName": "bettoraite",
+      "gender": "make",
+      "biography": "bettoraite",
+      "imageName": "0001.gif"
+    }
+  },
+  {
     "username": "eva",
     "profile": {
       "displayName": "Ева",

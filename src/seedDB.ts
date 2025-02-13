@@ -4,7 +4,7 @@ import storageService from "./features/storage/storage.service";
 import userService from "./features/users/user.service";
 import path from "node:path";
 import fs from "node:fs/promises";
-import { CreateUserProfilePayload } from "./features/profiles/profile.schema";
+import type { CreateUserProfilePayload } from "./features/profiles/profile.schema";
 
 interface InitData {
   username: string;

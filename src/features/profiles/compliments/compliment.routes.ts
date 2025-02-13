@@ -11,6 +11,7 @@ import {
   ensureComplimentExists,
   isComplimentOwner,
 } from "./compliment.middleware";
+import { z } from "zod";
 
 const profileComplimentsRouter: Router = Router();
 
@@ -29,6 +30,15 @@ profileComplimentsRouter.post(
 profileComplimentsRouter.get(
   "/profiles/:profileId/compliments",
   ensureResourceExists("profile"),
+  validateRequest({
+    query: z
+      .object({
+        userId: z.coerce.number(),
+        asc: z.enum(["createdAt"]),
+        desc: z.enum(["createdAt"]),
+      })
+      .partial(),
+  }),
   controller.handleGetCompliments,
 );
 profileComplimentsRouter.get(

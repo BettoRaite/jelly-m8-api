@@ -20,6 +20,7 @@ const createAdmin = async () => {
     console.log("Failed to init admin", err);
   }
 };
+
 const createUploadFolder = () => {
   const dirPath = path.join(process.cwd(), "tmp/uploads");
   if (!fs.existsSync(dirPath)) {

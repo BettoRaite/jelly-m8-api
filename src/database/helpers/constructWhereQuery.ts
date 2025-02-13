@@ -1,5 +1,5 @@
 import type { QueryOperators } from "@/lib/types/types";
-import { type Table, type SQLWrapper, and, SQL } from "drizzle-orm";
+import { type Table, type SQLWrapper, getTableColumns } from "drizzle-orm";
 import { OPERATORS } from "@/lib/constants";
 
 type Options<T> = {
@@ -22,20 +22,27 @@ export const constructWhereQuery = <T extends Record<string, unknown>>({
     throw new Error(`Query options are empty: ${JSON.stringify(queryOptions)}`);
   }
 
-  // Construct the WHERE clause conditions
-  const whereQuery = keys.map((key) => {
+  const tableCols = getTableColumns(table);
+  const whereQuery = [];
+  for (const key of keys) {
     const operator = operators[key] ?? "eq"; // Default to "eq" if no operator is specified
     const value = queryOptions[key as keyof T];
-
-    // Validate that the operator exists in the OPERATORS map
+    if (!value || !tableCols[key as keyof typeof tableCols]) {
+      continue;
+    }
     if (!OPERATORS[operator]) {
+      // Validate that the operator exists in the OPERATORS map
       throw new Error(`Invalid operator: ${operator}`);
     }
 
     // Apply the operator to the table column and value
-    return OPERATORS[operator](table[key], value as number | string);
-  });
-
+    whereQuery.push(
+      OPERATORS[operator](
+        table[key as keyof typeof tableCols],
+        value as number | string,
+      ),
+    );
+  }
   return whereQuery;
 };
 

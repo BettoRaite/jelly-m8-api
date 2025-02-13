@@ -4,6 +4,7 @@ import db from "@/database";
 import { and, eq } from "drizzle-orm";
 
 const createLike = async (payload: LikeInsert) => {
+  await db.insert(LikesTable).values(payload);
   const [compliment] = await complimentService.getCompliments({
     queryOptions: {
       id: payload.complimentId,
@@ -15,9 +16,9 @@ const createLike = async (payload: LikeInsert) => {
   await complimentService.updateCompliment(compliment.id, {
     likes: compliment.likes + 1,
   });
-  await db.insert(LikesTable).values(payload);
 };
 const deleteLike = async (payload: LikeInsert) => {
+  await db.delete(LikesTable).where(eq(LikesTable.userId, payload.userId));
   const [compliment] = await complimentService.getCompliments({
     queryOptions: {
       id: payload.complimentId,
@@ -32,7 +33,6 @@ const deleteLike = async (payload: LikeInsert) => {
   await complimentService.updateCompliment(compliment.id, {
     likes: compliment.likes - 1,
   });
-  await db.delete(LikesTable).where(eq(LikesTable.userId, payload.userId));
 };
 const getLike = async (query: LikeInsert) => {
   const [like] = await db
