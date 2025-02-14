@@ -70,5 +70,14 @@
       "biography": "Вера",
       "imageName": "photo_2024-02-13_00-35-54.jpg"
     }
+  },
+  {
+    "username": "Arthur",
+    "profile": {
+      "displayName": "Артур",
+      "gender": "male",
+      "biography": "Arthur is cool",
+      "imageName": "giphy.gif"
+    }
   }
 ]

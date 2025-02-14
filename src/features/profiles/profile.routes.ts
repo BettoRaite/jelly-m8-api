@@ -43,7 +43,6 @@ profilesRouter.get(
 // Get user profile
 profilesRouter.get(
   "/users/:userId/profile",
-  createAuthMiddleware("admin", "user"),
   ensureResourceExists("user"),
   ensureUserProfileExists,
   controller.handleGetProfile,

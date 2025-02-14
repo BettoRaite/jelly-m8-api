@@ -64,7 +64,7 @@ export const ComplimentsTable = pgTable(
       .references(() => UserProfilesTable.id, {
         onDelete: "cascade",
       }),
-    createdAt: date().defaultNow(),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
     isAdmin: boolean("is_admin").default(false),
     likes: integer().default(0).notNull(),
   },
@@ -86,7 +86,7 @@ export const LikesTable = pgTable(
     complimentId: integer("compliment_id")
       .references(() => ComplimentsTable.id, { onDelete: "cascade" })
       .notNull(), // Liked compliment (optional)
-    createdAt: timestamp("created_at").default(new Date()).notNull(), // Timestamp of the like
+    // Timestamp of the like
   },
   (t) => ({
     // Ensure a user can only like a profile or compliment once

@@ -9,7 +9,7 @@ import type {
 } from "./compliment.schema";
 import type { ParamsProfileId } from "../profile.schema";
 import type { JwtPayload } from "jsonwebtoken";
-import type { ComplimentInsert, ComplimentSelect } from "@/database/schema";
+import type { ComplimentInsert } from "@/database/schema";
 
 export const handleCreateCompliment = async (
   req: TypedRequest<CreateComplimentPayload, unknown, ParamsProfileId>,
@@ -26,9 +26,9 @@ export const handleCreateCompliment = async (
         profileId,
       },
     });
-    if (items[0]) {
+    if (items.length === 3) {
       return res.status(httpStatus.CONFLICT).json({
-        message: "Compliment for given profile already exists",
+        message: "You can't write more then 3 compliments for a given user",
       });
     }
   }

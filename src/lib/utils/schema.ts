@@ -10,11 +10,11 @@ export const createSortValidation = <T extends Record<string, unknown>>(
 ) => {
   return z
     .string()
-    .optional() // Allow the field to be optional
+    .transform((val) => (val ? val.split(",") : []))
     .refine(
-      (val) => {
-        if (!val) return false; // If no value, it's valid (optional)
-        const columns = val.split(",");
+      (columns) => {
+        if (columns.length === 0) return false;
+        // Check if all columns are allowed
         return columns.every((column) =>
           allowedColumns.includes(column as keyof T),
         );
