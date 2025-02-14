@@ -97,6 +97,11 @@ export const LikesTable = pgTable(
 export const QuestionsTable = pgTable("QuestionsTable", {
   id: serial("id").primaryKey(),
   content: varchar({ length: 255 }).notNull(),
+  userId: integer()
+    .references(() => UsersTable.id, { onDelete: "cascade" })
+    .notNull(),
+  isApproved: boolean().default(false).notNull(),
+  createdAt: timestamp().defaultNow().notNull(),
 });
 
 // Type Definitions
