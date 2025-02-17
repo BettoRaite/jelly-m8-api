@@ -8,7 +8,7 @@ import {
   UserProfilesTable,
 } from "@/database/schema";
 import type { AtLeastOne, QueryConfig } from "@/lib/types/types";
-import { and, asc, desc, eq, getTableColumns } from "drizzle-orm";
+import { aliasedTable, and, eq, getTableColumns } from "drizzle-orm";
 
 const createCompliment = async (payload: ComplimentInsert) => {
   await db.insert(ComplimentsTable).values(payload).returning();
@@ -28,6 +28,9 @@ const getComplimentBy = async (queryOptions: AtLeastOne<ComplimentSelect>) => {
   ).at(0);
 };
 
+const author = aliasedTable(UserProfilesTable, "author");
+const recipient = aliasedTable(UserProfilesTable, "recipient");
+
 export const getCompliments = async ({
   queryOptions = {},
   operators = {},
@@ -46,16 +49,16 @@ export const getCompliments = async ({
   const items = await db
     .select({
       ...getTableColumns(ComplimentsTable),
-      author: getTableColumns(UserProfilesTable),
+      author: getTableColumns(author),
+      recipient: getTableColumns(recipient),
     })
     .from(ComplimentsTable)
     .where(and(...query))
-    .innerJoin(
-      UserProfilesTable,
-      eq(ComplimentsTable.userId, UserProfilesTable.userId),
-    )
+    .innerJoin(author, eq(ComplimentsTable.userId, author.userId))
+    .leftJoin(recipient, eq(ComplimentsTable.profileId, recipient.id))
     .orderBy(...sort)
     .limit(pageSize);
+
   return items;
 };
 

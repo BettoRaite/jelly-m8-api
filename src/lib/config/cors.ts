@@ -1,4 +1,4 @@
-import { type CorsOptions } from "cors";
+import type { CorsOptions } from "cors";
 import config from "./config";
 
 const whitelist = String(config.cors.cors_origin).split("|") ?? [];

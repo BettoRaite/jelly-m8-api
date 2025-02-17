@@ -31,10 +31,9 @@ const createUploadFolder = () => {
   }
 };
 
+createAdmin();
+createUploadFolder();
+
 if (config.node_env === "development") {
-  (() => {
-    createAdmin();
-    createUploadFolder();
-    seedDB();
-  })();
+  seedDB();
 }

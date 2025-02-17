@@ -6,7 +6,7 @@ import {
   QuestionsTable,
   type QuestionInsert,
 } from "@/database/schema";
-import { QueryConfig } from "@/lib/types/types";
+import type { QueryConfig } from "@/lib/types/types";
 import { and } from "drizzle-orm";
 
 const createQuestion = async (payload: QuestionInsert) => {
@@ -33,6 +33,7 @@ const getQuestions = async (queryConfig: QueryConfig<QuestionSelect>) => {
 
 const questionService = {
   createQuestion,
+  getQuestions,
 };
 
 export default questionService;

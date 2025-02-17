@@ -47,7 +47,7 @@ export const constructWhereQuery = <T extends Record<string, unknown>>({
 };
 
 /**
- * Formats specific fields of an object into `%value%` for SQL LIKE queries.
+ * Formats number/string fields of an object into `%value%` for SQL LIKE queries.
  * @param obj - The object containing fields to format.
  * @param fieldsToFormat - An array of keys to format (optional). If not provided, all string fields will be formatted.
  * @returns A new object with the specified fields formatted or the object itself if number of fields is 0.

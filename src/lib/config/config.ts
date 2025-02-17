@@ -1,5 +1,5 @@
 import * as dotenv from "dotenv";
-import path from "path";
+import path from "node:path";
 import z from "zod";
 
 dotenv.config({
@@ -19,6 +19,7 @@ const envSchema = z.object({
   SUPABASE_DEFAULT_PROFILE_IMAGE_URL: z.string().optional(),
   SUPABASE_PROJECT_URL: z.string(),
   SUPABASE_API_KEY: z.string(),
+  ADMIN_SECRET_TOKEN: z.string().optional().default("admin"),
 });
 
 const { success, data, error } = envSchema.safeParse(process.env);
@@ -27,7 +28,7 @@ if (!success) {
   throw new Error(
     `Environment variable validation error: \n${error.errors
       .map((detail) => `${detail.path} ${detail.message}`)
-      .join("\n")}`
+      .join("\n")}`,
   );
 }
 
@@ -55,5 +56,6 @@ const config = {
     project_api_key: data.SUPABASE_API_KEY,
     default_profile_image_url: data.SUPABASE_DEFAULT_PROFILE_IMAGE_URL,
   },
+  admin_secret: data.ADMIN_SECRET_TOKEN,
 } as const;
 export default config;

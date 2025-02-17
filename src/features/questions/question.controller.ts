@@ -20,5 +20,10 @@ export const handleCreateQuestion = async (req: Request, res: Response) => {
 };
 
 export const handleGetQuestions = async (req: Request, res: Response) => {
-  await questionService.getQuestions({});
+  const items = await questionService.getQuestions({
+    queryOptions: req.query,
+  });
+  res.status(httpStatus.OK).json({
+    data: items,
+  });
 };

@@ -9,6 +9,7 @@ import {
 } from "@/features/profiles/profile.schema";
 import { paramsComplimentIdSchema } from "@/features/profiles/compliments/compliment.schema";
 import complimentService from "@/shared/services/compliment.service";
+import questionService from "@/features/questions/question.service";
 
 // Configuration object for different resources
 const RESOURCE_CONFIG = {
@@ -28,6 +29,20 @@ const RESOURCE_CONFIG = {
     schema: paramsComplimentIdSchema,
     serviceFn: (data: { complimentId: number }) =>
       complimentService.getComplimentBy({ id: data.complimentId }),
+  },
+  question: {
+    schema: z.object({
+      questionId: z.coerce.number().positive(),
+    }),
+    serviceFn: async (data: { questionId: number }) => {
+      return (
+        await questionService.getQuestions({
+          queryOptions: {
+            id: data.questionId,
+          },
+        })
+      ).at(0);
+    },
   },
 } as const;
 

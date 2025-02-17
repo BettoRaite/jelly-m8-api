@@ -45,7 +45,6 @@ profileComplimentsRouter.get(
 );
 profileComplimentsRouter.get(
   "/profiles/:profileId/compliments/:complimentId",
-  createAuthMiddleware("admin", "user"),
   ensureResourceExists("profile"),
   ensureResourceExists("compliment"),
   controller.handleGetCompliment,

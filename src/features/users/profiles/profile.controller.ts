@@ -6,9 +6,8 @@ import type {
   // profileActivationSchema,
 } from "./profile.schema";
 import type { TypedRequest } from "@/lib/types/types";
-// import type { JwtPayload } from "jsonwebtoken";
 import * as profileService from "./profile.service";
-import { createLinkToLocalImageFile } from "../storage/storage.service";
+import { createLinkToLocalImageFile } from "@/features/storage/storage.service";
 import type { UserGender, UserProfileInsert } from "@/database/schema";
 import { formatObjectLikeQuery } from "@/database/helpers/constructWhereQuery";
 
@@ -37,7 +36,7 @@ export const handleCreateProfile = async (
   await profileService.createProfile(
     userId,
     payload,
-    req.file as Express.Multer.File,
+    req.file?.filename as string,
   );
 
   res.status(httpStatus.CREATED).json({
@@ -108,7 +107,7 @@ export const handleUpdateProfile = async (req: Request, res: Response) => {
   if (req.file) {
     payload.profileImageUrl = createLinkToLocalImageFile(req.file.filename);
   }
-  await profileService.updateProfile(userId, payload, req.file);
+  await profileService.updateProfile(userId, payload);
 
   res.status(httpStatus.OK).json({ message: "Successfully updated profile" });
 };

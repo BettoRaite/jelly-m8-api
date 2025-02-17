@@ -9,9 +9,7 @@ import logger from "@/middleware/logger";
 import type { CreateUserProfilePayload } from "./profile.schema";
 import { and, eq } from "drizzle-orm";
 import httpStatus from "http-status";
-import storageService, {
-  tryUploadUserProfileImage,
-} from "../storage/storage.service";
+import storageService from "@/features/storage/storage.service";
 import { constructWhereQuery } from "@/database/helpers/constructWhereQuery";
 import config from "@/lib/config/config";
 import type { QueryConfig } from "@/lib/types/types";
@@ -19,17 +17,11 @@ import type { QueryConfig } from "@/lib/types/types";
 export const createProfile = async (
   userId: number,
   payload: CreateUserProfilePayload,
-  imageFile: Express.Multer.File,
+  imageUrl = "",
 ) => {
   const activationSecret =
     config.node_env === "development" ? "unlock" : getRandSecret();
-
-  let profileImageUrl = storageService.createLinkToLocalImageFile(
-    imageFile.fieldname,
-  );
-  if (config.node_env === "production") {
-    profileImageUrl = await tryUploadUserProfileImage(userId, imageFile);
-  }
+  let profileImageUrl = storageService.createLinkToLocalImageFile(imageUrl);
   if (config.node_env === "development" && payload.imageName) {
     profileImageUrl = storageService.createLinkToLocalImageFile(
       payload.imageName,
@@ -98,14 +90,7 @@ export const getProfileBy = async (
 export const updateProfile = async (
   userId: number,
   payload: Partial<Omit<UserProfileInsert, "id">>,
-  imageFile?: Express.Multer.File,
 ): Promise<void> => {
-  if (config.node_env === "production" && imageFile) {
-    payload.profileImageUrl = await tryUploadUserProfileImage(
-      userId,
-      imageFile,
-    );
-  }
   await db
     .update(UserProfilesTable)
     .set({ ...payload })

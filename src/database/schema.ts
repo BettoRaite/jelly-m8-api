@@ -7,7 +7,6 @@ import {
   boolean,
   unique,
   timestamp,
-  date,
 } from "drizzle-orm/pg-core";
 
 // Users Table with enum
@@ -35,6 +34,11 @@ export const UserProfilesTable = pgTable(
     gender: varchar({
       enum: ["male", "female"],
     }).notNull(),
+    occupation: varchar({
+      enum: ["teacher", "student"],
+    })
+      .default("student")
+      .notNull(),
     biography: text("biography").notNull(),
     isActivated: boolean().default(false),
     activationSecret: varchar({ length: 255 }).notNull(),
