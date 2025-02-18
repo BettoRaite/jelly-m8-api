@@ -1,10 +1,10 @@
 import { drizzle } from "drizzle-orm/postgres-js";
 import config from "@/lib/config/config";
+import postgres from "postgres";
 
-const db = drizzle({
-  connection: {
-    url: config.database.url,
-  },
+const connectionString = config.database.url;
+const client = postgres(connectionString, { prepare: false });
+const db = drizzle(client, {
   casing: "snake_case",
 });
 
