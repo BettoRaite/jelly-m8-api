@@ -44,6 +44,7 @@ export async function seedDB(): Promise<void> {
             await profileService.createProfile(
               user.id,
               profile as unknown as CreateUserProfilePayload,
+              null,
             );
           } else if (profile.imageName) {
             await profileService.updateProfile(user.id, {
