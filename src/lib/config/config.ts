@@ -19,7 +19,7 @@ const envSchema = z.object({
   SUPABASE_DEFAULT_PROFILE_IMAGE_URL: z.string().optional(),
   SUPABASE_PROJECT_URL: z.string(),
   SUPABASE_API_KEY: z.string(),
-  ADMIN_SECRET_TOKEN: z.string().optional().default("admin"),
+  ADMIN_AUTH_SECRET: z.string(),
 });
 
 const { success, data, error } = envSchema.safeParse(process.env);
@@ -56,6 +56,6 @@ const config = {
     project_api_key: data.SUPABASE_API_KEY,
     default_profile_image_url: data.SUPABASE_DEFAULT_PROFILE_IMAGE_URL,
   },
-  admin_secret: data.ADMIN_SECRET_TOKEN,
+  admin_auth_secret: data.ADMIN_AUTH_SECRET,
 } as const;
 export default config;

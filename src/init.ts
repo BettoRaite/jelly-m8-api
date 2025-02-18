@@ -10,7 +10,7 @@ const createAdmin = async () => {
     const user = await userService.getUserBy({ username: "admin" });
     if (!user) {
       await userService.createUser({
-        accessSecret: "admin",
+        accessSecret: config.admin_auth_secret,
         username: "admin",
         userRole: "admin",
       });
