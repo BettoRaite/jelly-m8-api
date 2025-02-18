@@ -28,9 +28,9 @@ app.use(cookieParser());
 app.use(compression({ filter: compressFilter }));
 app.use(cors(corsConfig));
 
-if (config.node_env === "production") {
-  app.use("/api/v1/auth", authLimiter);
-}
+// if (config.node_env === "production") {
+//   app.use("/api/v1/auth", authLimiter);
+// }
 
 app.use("/api/v1", router);
 
