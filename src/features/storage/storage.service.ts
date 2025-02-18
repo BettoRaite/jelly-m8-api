@@ -1,17 +1,19 @@
-import type { CreateUserPayload } from "../users/user.schema";
 import { createClient } from "@supabase/supabase-js";
 import config from "@/lib/config/config";
 import logger from "@/middleware/logger";
 import fs from "node:fs/promises";
 // Create Supabase client
 
-const supabase = (() => {
-  if (config.node_env !== "development") {
-    createClient(config.supabase.project_url, config.supabase.project_api_key);
+let supabase = {} as ReturnType<typeof createClient>;
+if (config.node_env === "production") {
+  supabase = createClient(
+    config.supabase.project_url,
+    config.supabase.project_api_key,
+  );
+  if (!supabase) {
+    throw new TypeError("Supabase client init failed");
   }
-  return {};
-})() as ReturnType<typeof createClient>;
-
+}
 /**
  * Uploads a file to Supabase storage.
  * @param filepath - The path where the file will be stored.

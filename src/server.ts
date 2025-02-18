@@ -3,8 +3,6 @@ import config from "./lib/config/config";
 import logger from "./middleware/logger";
 import "./init";
 
-console.log(config.database.url);
-
 const server = app.listen(Number(config.server.port), () => {
   logger.log("info", `Server is running on Port: ${config.server.port}`);
 });
