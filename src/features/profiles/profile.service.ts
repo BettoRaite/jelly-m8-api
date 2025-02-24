@@ -25,7 +25,7 @@ export const createProfile = async (
     config.node_env === "development" ? "unlock" : getRandSecret();
 
   let profileImageUrl = storageService.createLinkToLocalImageFile(
-    imageFile.fieldname,
+    imageFile?.fieldname ?? "",
   );
   if (config.node_env === "production") {
     profileImageUrl = await tryUploadUserProfileImage(userId, imageFile);

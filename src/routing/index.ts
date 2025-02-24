@@ -5,6 +5,7 @@ import profilesRouter from "@/features/profiles/profile.routes";
 import profileComplimentRoutes from "@/features/profiles/compliments/compliment.routes";
 import likesRouter from "@/features/compliments/likes/like.routes";
 import { createImageHandler } from "@/features/uploads/createImageHandler";
+import questionsRouter from "@/features/questions/question.routes";
 // import userProfilesRouter from "./userProfiles.route";
 import complimentsRouter from "@/features/compliments/compliment.route";
 
@@ -18,5 +19,6 @@ router.use(profilesRouter);
 router.use(complimentsRouter);
 router.use(likesRouter);
 router.use(profileComplimentRoutes);
+router.use(questionsRouter);
 
 export default router;

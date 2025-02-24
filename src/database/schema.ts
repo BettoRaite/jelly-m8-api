@@ -43,6 +43,7 @@ export const UserProfilesTable = pgTable(
     isActivated: boolean().default(false),
     activationSecret: varchar({ length: 255 }).notNull(),
     profileImageUrl: varchar("profile_image_url", { length: 500 }).notNull(),
+    quote: text(),
   },
   (t) => [
     {

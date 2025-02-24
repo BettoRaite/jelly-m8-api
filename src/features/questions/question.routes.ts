@@ -3,6 +3,7 @@ import createAuthMiddleware from "@/middleware/auth";
 import * as controller from "./question.controller";
 import { validateRequest } from "@/middleware/validate";
 import { z } from "zod";
+import { ensureResourceExists } from "@/middleware/ensureItemExists";
 
 const questionsRouter: Router = Router();
 
@@ -20,38 +21,36 @@ questionsRouter.post(
 questionsRouter.get(
   "/questions",
   validateRequest({
-    query: z.object({
-      userId: z.coerce.number().positive(),
-      isApproved: z.any().transform(() => true),
-    }),
+    query: z
+      .object({
+        userId: z.coerce.number().positive().optional(),
+        isApproved: z.any().transform(() => true),
+      })
+      .optional(),
   }),
   controller.handleGetQuestions,
 );
 
 questionsRouter.patch(
   "/questions/:questionId",
-  createAuthMiddleware("admin", "user"),
+  createAuthMiddleware("admin"),
   validateRequest({
-    query: z.object({
-      userId: z.coerce.number().positive(),
-    }),
     body: z.object({
       content: z.string(),
     }),
+    params: z.object({
+      questionId: z.coerce.number().positive(),
+    }),
   }),
-  controller.handleGetQuestions,
+  ensureResourceExists("question"),
+  controller.handleUpdateQuestion,
 );
 
 questionsRouter.delete(
   "/questions/:questionId",
-  createAuthMiddleware("admin", "user"),
-  validateRequest({
-    query: z.object({
-      userId: z.coerce.number().positive(),
-      isApproved: z.any().transform(() => true),
-    }),
-  }),
-  controller.handleGetQuestions,
+  createAuthMiddleware("admin"),
+  ensureResourceExists("question"),
+  controller.handleDeleteQuestion,
 );
 
 export default questionsRouter;

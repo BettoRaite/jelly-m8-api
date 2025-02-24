@@ -1,13 +1,14 @@
 import z from "zod";
 // import type { UserProfileInsert } from "@/database/schema";
 import { hasAtLeastOneField } from "@/lib/utils/object";
-
 export const createUserProfileSchema = z
   .object({
     displayName: z.string().trim().min(3),
     biography: z.string().trim().min(3),
+    quote: z.string().trim().optional(),
     gender: z.enum(["male", "female"]),
     imageName: z.string().optional(),
+    occupation: z.enum(["student", "teacher"]).default("student"),
   })
   .strict();
 
@@ -25,6 +26,7 @@ export const updateProfileSchema = z
       return "error";
     }, z.boolean().optional()),
     activationSecret: z.string().trim().min(3),
+    quote: z.string().trim().optional(),
   })
   .strict()
   .partial()

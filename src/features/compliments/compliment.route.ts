@@ -10,7 +10,6 @@ const complimentsRouter: Router = Router();
 
 complimentsRouter.get(
   "/compliments",
-  createAuthMiddleware("user", "admin"),
   validateRequest({
     query: z
       .object({

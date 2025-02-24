@@ -27,3 +27,24 @@ export const handleGetQuestions = async (req: Request, res: Response) => {
     data: items,
   });
 };
+
+export const handleUpdateQuestion = async (req: Request, res: Response) => {
+  questionService.updateQuestion(
+    req.params["questionId"] as unknown as number,
+    {
+      content: req.body.content,
+    },
+  );
+  res.status(httpStatus.OK).json({
+    message: "Successfully deleted question",
+  });
+};
+
+export const handleDeleteQuestion = async (req: Request, res: Response) => {
+  await questionService.deleteQuestion(
+    req.params["questionId"] as unknown as number,
+  );
+  res.status(httpStatus.OK).json({
+    message: "Successfully deleted question",
+  });
+};

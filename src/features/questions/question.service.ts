@@ -7,7 +7,7 @@ import {
   type QuestionInsert,
 } from "@/database/schema";
 import type { QueryConfig } from "@/lib/types/types";
-import { and } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 
 const createQuestion = async (payload: QuestionInsert) => {
   await db.insert(QuestionsTable).values(payload);
@@ -31,9 +31,27 @@ const getQuestions = async (queryConfig: QueryConfig<QuestionSelect>) => {
     .limit(pagination?.pageSize ?? 100);
 };
 
+const updateQuestion = async (
+  questionId: number,
+  payload: Partial<QuestionInsert>,
+) => {
+  return await db
+    .update(QuestionsTable)
+    .set(payload)
+    .where(eq(QuestionsTable.id, questionId));
+};
+
+const deleteQuestion = async (questionId: number) => {
+  return await db
+    .delete(QuestionsTable)
+    .where(eq(QuestionsTable.id, questionId));
+};
+
 const questionService = {
   createQuestion,
   getQuestions,
+  updateQuestion,
+  deleteQuestion,
 };
 
 export default questionService;
