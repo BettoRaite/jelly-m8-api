@@ -5,7 +5,11 @@ interface CreateUserSchema extends Omit<UserSelect, "id" | "accessSecret"> {}
 
 export const createUserSchema: z.ZodType<CreateUserSchema> = z.object({
   accessSecret: z.string().optional(),
-  username: z.string().trim().min(3).toLowerCase(),
+  username: z
+    .string()
+    .trim()
+    .min(3)
+    .transform((v) => v.toLowerCase()),
   userRole: z.enum(["admin", "user"]),
 });
 
