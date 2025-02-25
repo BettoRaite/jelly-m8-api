@@ -27,8 +27,8 @@ export const updateProfileSchema = z
     }, z.boolean().optional()),
     activationSecret: z.string().trim().min(3),
     quote: z.string().trim().optional(),
+    occupation: z.enum(["student", "teacher"]),
   })
-  .strict()
   .partial()
   .refine(
     (data) => hasAtLeastOneField(data),
