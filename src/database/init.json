@@ -1,5 +1,14 @@
 [
   {
+    "username": "Nuria",
+    "profile": {
+      "displayName": "Нурия Мустафовна",
+      "gender": "female",
+      "biography": "Создаю только лучших людей",
+      "imageName": "girly.jpeg"
+    }
+  },
+  {
     "username": "Vika",
     "profile": {
       "displayName": "Викуся :3",
@@ -72,12 +81,6 @@
     }
   },
   {
-    "username": "Arthur",
-    "profile": {
-      "displayName": "Артур",
-      "gender": "male",
-      "biography": "Arthur is cool",
-      "imageName": "giphy.gif"
-    }
+    "username": "Arthur"
   }
 ]

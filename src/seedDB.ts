@@ -5,13 +5,13 @@ import userService from "./features/users/user.service";
 import path from "node:path";
 import fs from "node:fs/promises";
 import type { CreateUserProfilePayload } from "./features/profiles/profile.schema";
+import config from "./lib/config/config";
 
 interface InitData {
   username: string;
-  profile: {
+  profile?: {
     imageName?: string;
-    // Add other profile fields here if needed
-  };
+  } & CreateUserProfilePayload;
 }
 
 export async function seedDB(): Promise<void> {
@@ -40,13 +40,10 @@ export async function seedDB(): Promise<void> {
             userId: user.id,
           });
 
-          if (!userProfile) {
-            await profileService.createProfile(
-              user.id,
-              profile as unknown as CreateUserProfilePayload,
-              null,
-            );
-          } else if (profile.imageName) {
+          if (!userProfile && profile) {
+            await profileService.createProfile(user.id, profile);
+          }
+          if (config.node_env === "development" && profile?.imageName) {
             await profileService.updateProfile(user.id, {
               profileImageUrl: storageService.createLinkToLocalImageFile(
                 profile.imageName,

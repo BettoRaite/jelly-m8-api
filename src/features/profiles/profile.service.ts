@@ -19,7 +19,7 @@ import type { QueryConfig } from "@/lib/types/types";
 export const createProfile = async (
   userId: number,
   payload: CreateUserProfilePayload,
-  imageFile: Express.Multer.File,
+  imageFile?: Express.Multer.File,
 ) => {
   const activationSecret =
     config.node_env === "development" ? "unlock" : getRandSecret(5);
