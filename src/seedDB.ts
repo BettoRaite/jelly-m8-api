@@ -6,6 +6,7 @@ import path from "node:path";
 import fs from "node:fs/promises";
 import type { CreateUserProfilePayload } from "./features/profiles/profile.schema";
 import config from "./lib/config/config";
+import { getRandSecret } from "./lib/utils/random";
 
 interface InitData {
   username: string;
@@ -42,6 +43,12 @@ export async function seedDB(): Promise<void> {
 
           if (!userProfile && profile) {
             await profileService.createProfile(user.id, profile);
+          }
+          if (profile) {
+            await profileService.updateProfile(user.id, {
+              ...profile,
+              activationSecret: getRandSecret(5),
+            });
           }
           if (config.node_env === "development" && profile?.imageName) {
             await profileService.updateProfile(user.id, {

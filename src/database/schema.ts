@@ -39,7 +39,7 @@ export const UserProfilesTable = pgTable(
     })
       .default("student")
       .notNull(),
-    biography: text("biography").notNull(),
+    biography: text("biography"),
     isActivated: boolean().default(false),
     activationSecret: varchar({ length: 255 }).notNull(),
     profileImageUrl: varchar("profile_image_url", { length: 500 }).notNull(),
@@ -54,7 +54,7 @@ export const UserProfilesTable = pgTable(
 
 // Compliments Table
 export const ComplimentsTable = pgTable(
-  "table",
+  "compliments",
   {
     id: serial("id").primaryKey(),
     title: varchar("title", {
