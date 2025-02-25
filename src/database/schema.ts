@@ -101,7 +101,7 @@ export const LikesTable = pgTable(
   }),
 );
 
-export const QuestionsTable = pgTable("QuestionsTable", {
+export const QuestionsTable = pgTable("questions", {
   id: serial("id").primaryKey(),
   content: varchar({ length: 255 }).notNull(),
   userId: integer()
