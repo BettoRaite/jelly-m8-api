@@ -8,7 +8,7 @@ export const createUserProfileSchema = z
     quote: z.string().trim().optional(),
     gender: z.enum(["male", "female"]),
     imageName: z.string().optional(),
-    occupation: z.enum(["student", "teacher"]).default("student"),
+    occupation: z.enum(["student", "teacher"]).default("student").optional(),
   })
   .strict();
 
