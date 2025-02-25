@@ -10,7 +10,7 @@ import {
 } from "drizzle-orm/pg-core";
 
 // Users Table with enum
-export const UsersTable = pgTable("UsersTable", {
+export const UsersTable = pgTable("users", {
   id: serial("id").primaryKey(),
   username: varchar("username", { length: 100 }).notNull().unique(),
   userRole: varchar({ enum: ["admin", "user"] })
@@ -21,7 +21,7 @@ export const UsersTable = pgTable("UsersTable", {
 
 // User Profiles Table with enum
 export const UserProfilesTable = pgTable(
-  "UserProfilesTable",
+  "profiles",
   {
     id: serial("id").primaryKey(),
     userId: integer("user_id")
@@ -54,7 +54,7 @@ export const UserProfilesTable = pgTable(
 
 // Compliments Table
 export const ComplimentsTable = pgTable(
-  "ComplimentsTable",
+  "table",
   {
     id: serial("id").primaryKey(),
     title: varchar("title", {
@@ -63,7 +63,9 @@ export const ComplimentsTable = pgTable(
     content: text().notNull(),
     userId: integer("user_id")
       .notNull()
-      .references(() => UsersTable.id),
+      .references(() => UsersTable.id, {
+        onDelete: "cascade",
+      }),
     profileId: integer("profile_id")
       .notNull()
       .references(() => UserProfilesTable.id, {
@@ -82,7 +84,7 @@ export const ComplimentsTable = pgTable(
 
 // Likes Table
 export const LikesTable = pgTable(
-  "LikesTable",
+  "likes",
   {
     id: serial("id").primaryKey(),
     userId: integer("user_id")
