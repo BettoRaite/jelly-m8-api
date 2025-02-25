@@ -22,12 +22,12 @@ export const createProfile = async (
   imageFile: Express.Multer.File,
 ) => {
   const activationSecret =
-    config.node_env === "development" ? "unlock" : getRandSecret();
+    config.node_env === "development" ? "unlock" : getRandSecret(5);
 
   let profileImageUrl = storageService.createLinkToLocalImageFile(
     imageFile?.fieldname ?? "",
   );
-  if (config.node_env === "production") {
+  if (config.node_env === "production" && imageFile) {
     profileImageUrl = await tryUploadUserProfileImage(userId, imageFile);
   }
   if (config.node_env === "development" && payload.imageName) {
