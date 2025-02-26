@@ -1,41 +1,78 @@
-import { type LikeInsert, LikesTable, LikeSelect } from "@/database/schema";
+import { type LikeInsert, LikesTable } from "@/database/schema";
 import complimentService from "../../../shared/services/compliment.service";
 import db from "@/database";
 import { and, eq } from "drizzle-orm";
+import { ApiError } from "@/lib/errors";
+import httpStatus from "http-status";
 
 const createLike = async (payload: LikeInsert) => {
-  await db.insert(LikesTable).values(payload);
-  const [compliment] = await complimentService.getCompliments({
-    queryOptions: {
-      id: payload.complimentId,
-    },
-  });
-  if (!compliment) {
-    throw new TypeError(`Compliment does not exist ${payload}`);
-  }
-  await complimentService.updateCompliment(compliment.id, {
-    likes: compliment.likes + 1,
+  await db.transaction(async (tx) => {
+    const [existingLike] = await tx
+      .select()
+      .from(LikesTable)
+      .where(
+        and(
+          eq(LikesTable.complimentId, payload.complimentId),
+          eq(LikesTable.userId, payload.userId),
+        ),
+      )
+      .limit(1);
+
+    if (existingLike) {
+      throw new ApiError("Like already exists", httpStatus.CONFLICT);
+    }
+
+    await tx.insert(LikesTable).values(payload);
+
+    const [compliment] = await complimentService.getCompliments({
+      queryOptions: {
+        id: payload.complimentId,
+      },
+    });
+
+    if (!compliment) {
+      throw new TypeError(`Compliment does not exist ${payload}`);
+    }
+
+    await complimentService.updateCompliment(compliment.id, {
+      likes: compliment.likes + 1,
+    });
   });
 };
+
 const deleteLike = async (payload: LikeInsert) => {
-  await db.delete(LikesTable).where(eq(LikesTable.userId, payload.userId));
-  const [compliment] = await complimentService.getCompliments({
-    queryOptions: {
-      id: payload.complimentId,
-    },
-  });
-  if (!compliment) {
-    throw new TypeError(`Compliment does not exist ${payload}`);
-  }
-  if (compliment.likes === 0) {
-    return;
-  }
-  await complimentService.updateCompliment(compliment.id, {
-    likes: compliment.likes - 1,
+  await db.transaction(async (tx) => {
+    await tx
+      .delete(LikesTable)
+      .where(
+        and(
+          eq(LikesTable.complimentId, payload.complimentId),
+          eq(LikesTable.userId, payload.userId),
+        ),
+      );
+
+    const [compliment] = await complimentService.getCompliments({
+      queryOptions: {
+        id: payload.complimentId,
+      },
+    });
+
+    if (!compliment) {
+      throw new TypeError(`Compliment does not exist ${payload}`);
+    }
+
+    if (compliment.likes === 0) {
+      return;
+    }
+
+    await complimentService.updateCompliment(compliment.id, {
+      likes: compliment.likes - 1,
+    });
   });
 };
-const getLike = async (query: LikeInsert) => {
-  const [like] = await db
+
+const getLikes = async (query: LikeInsert) => {
+  return db
     .select()
     .from(LikesTable)
     .where(
@@ -45,13 +82,12 @@ const getLike = async (query: LikeInsert) => {
       ),
     )
     .limit(1);
-  return like;
 };
 
 const likeService = {
   createLike,
   deleteLike,
-  getLike,
+  getLikes,
 };
 
 export default likeService;
