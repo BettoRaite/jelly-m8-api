@@ -8,7 +8,15 @@ import {
   UserProfilesTable,
 } from "@/database/schema";
 import type { AtLeastOne, QueryConfig } from "@/lib/types/types";
-import { aliasedTable, and, eq, getTableColumns } from "drizzle-orm";
+import {
+  ExtractTablesWithRelations,
+  aliasedTable,
+  and,
+  eq,
+  getTableColumns,
+} from "drizzle-orm";
+import { PgTransaction } from "drizzle-orm/pg-core";
+import { PostgresJsQueryResultHKT } from "drizzle-orm/postgres-js";
 
 const createCompliment = async (payload: ComplimentInsert) => {
   await db.insert(ComplimentsTable).values(payload).returning();
@@ -36,7 +44,14 @@ export const getCompliments = async ({
   operators = {},
   pagination: { pageSize = 100 } = {},
   sorting = {},
-}: QueryConfig<ComplimentSelect>) => {
+  tx,
+}: QueryConfig<ComplimentSelect> & {
+  tx?: PgTransaction<
+    PostgresJsQueryResultHKT,
+    Record<string, never>,
+    ExtractTablesWithRelations<Record<string, never>>
+  >;
+}) => {
   const query = constructWhereQuery({
     queryOptions,
     table: ComplimentsTable,
@@ -46,7 +61,7 @@ export const getCompliments = async ({
     table: ComplimentsTable,
     ...sorting,
   });
-  const items = await db
+  const items = await (tx ?? db)
     .select({
       ...getTableColumns(ComplimentsTable),
       author: getTableColumns(author),
@@ -65,8 +80,13 @@ export const getCompliments = async ({
 const updateCompliment = async (
   complimentId: number,
   payload: Partial<ComplimentInsert>,
+  tx?: PgTransaction<
+    PostgresJsQueryResultHKT,
+    Record<string, never>,
+    ExtractTablesWithRelations<Record<string, never>>
+  >,
 ) => {
-  return await db
+  return await (tx ?? db)
     .update(ComplimentsTable)
     .set({
       ...payload,

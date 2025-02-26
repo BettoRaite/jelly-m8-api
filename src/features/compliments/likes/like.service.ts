@@ -23,20 +23,24 @@ const createLike = async (payload: LikeInsert) => {
     }
 
     await tx.insert(LikesTable).values(payload);
-
     const [compliment] = await complimentService.getCompliments({
       queryOptions: {
         id: payload.complimentId,
       },
+      tx,
     });
 
     if (!compliment) {
       throw new TypeError(`Compliment does not exist ${payload}`);
     }
 
-    await complimentService.updateCompliment(compliment.id, {
-      likes: compliment.likes + 1,
-    });
+    await complimentService.updateCompliment(
+      compliment.id,
+      {
+        likes: compliment.likes + 1,
+      },
+      tx,
+    );
   });
 };
 
