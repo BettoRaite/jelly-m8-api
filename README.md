@@ -14,6 +14,12 @@ Welcome to the JellyM8 API! A mini-api to power-up Jelly-m8 frontend. Please not
 
 Using Docker is highly recommended to simplify the setup process. Follow the steps below to build and run the application using Docker:
 
+### Copy repo
+```bash
+git clone ...
+```
+**Switch to all-users-db-model**
+
 ### Build and Run
 
 ```bash
