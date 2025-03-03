@@ -6,21 +6,35 @@ dotenv.config({
   path: path.resolve(__dirname, "../../.env"),
 });
 
-const envSchema = z.object({
-  NODE_ENV: z
-    .enum(["production", "development", "test"])
-    .default("development"),
-  PORT: z.string().default("4000"),
-  SERVER_URL: z.string(),
-  CORS_ORIGIN: z.string().default("*"),
-  ACCESS_TOKEN_SECRET: z.string().min(1),
-  ACCESS_TOKEN_EXPIRE: z.string().min(1),
-  DATABASE_URL: z.string(),
-  SUPABASE_DEFAULT_PROFILE_IMAGE_URL: z.string().optional(),
-  SUPABASE_PROJECT_URL: z.string(),
-  SUPABASE_API_KEY: z.string(),
-  ADMIN_AUTH_SECRET: z.string(),
-});
+const envSchema = z
+  .object({
+    NODE_ENV: z
+      .enum(["production", "development", "test"])
+      .default("development"),
+    PORT: z.string().default("4000"),
+    SERVER_URL: z.string(),
+    CORS_ORIGIN: z.string().default("*"),
+    ACCESS_TOKEN_SECRET: z.string().min(1),
+    ACCESS_TOKEN_EXPIRE: z.string().min(1),
+    DATABASE_URL: z.string(),
+    ADMIN_AUTH_SECRET: z.string(),
+    SUPABASE_DEFAULT_PROFILE_IMAGE_URL: z.string().optional(),
+    SUPABASE_PROJECT_URL: z.string().optional(),
+    SUPABASE_API_KEY: z.string().optional(),
+  })
+  .refine(
+    (data) => {
+      if (data.NODE_ENV === "production") {
+        return data.SUPABASE_PROJECT_URL && data.SUPABASE_API_KEY;
+      }
+      return true;
+    },
+    {
+      message:
+        "SUPABASE_PROJECT_URL and SUPABASE_API_KEY are required when NODE_ENV is production",
+      path: ["SUPABASE_PROJECT_URL", "SUPABASE_API_KEY"],
+    },
+  );
 
 const { success, data, error } = envSchema.safeParse(process.env);
 

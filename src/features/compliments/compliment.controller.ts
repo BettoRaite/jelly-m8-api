@@ -8,7 +8,10 @@ export const handleGetCompliments = async (req: Request, res: Response) => {
     operators: {
       title: "ilike",
     },
-    queryOptions: formatObjectLikeQuery(req.query as Record<string, string>),
+    queryOptions: {
+      ...formatObjectLikeQuery(req.query as Record<string, string>),
+      visibility: "public",
+    },
     sorting: req.query,
   });
   res.status(httpStatus.OK).json({

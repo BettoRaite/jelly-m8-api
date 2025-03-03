@@ -71,6 +71,11 @@ export const ComplimentsTable = pgTable(
       .references(() => UserProfilesTable.id, {
         onDelete: "cascade",
       }),
+    visibility: text({
+      enum: ["public", "private"],
+    })
+      .notNull()
+      .default("public"),
     createdAt: timestamp("created_at").defaultNow().notNull(),
     isAdmin: boolean("is_admin").default(false),
     likes: integer().default(0).notNull(),

@@ -50,6 +50,7 @@ export const handleGetCompliments = async (req: Request, res: Response) => {
     queryOptions: {
       profileId,
       ...req.query,
+      visibility: "public",
     },
     sorting: req.query as QuerySort<unknown>,
   });

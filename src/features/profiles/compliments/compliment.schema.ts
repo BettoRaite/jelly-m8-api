@@ -4,6 +4,7 @@ import z, { coerce } from "zod";
 export const createComplimentSchema = z.object({
   title: z.string().min(3),
   content: z.string().min(3),
+  visibility: z.enum(["private", "public"]),
 });
 
 export const updateComplimentSchema = z
