@@ -31,6 +31,7 @@ sudo docker compose -f docker-compose.dev.yaml up --build
    ```bash
    pnpm install
    ```
+3. Done, now you can return to jelly-m8(frontend part)
 
 ## Development
 
